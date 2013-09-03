@@ -17,6 +17,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
       @player.on "domReady", @render, @
       @config = options.config
       @config.on "change:task", @setTask, @
+      @userstate = options.userstate
+      #@userstateDfd = @userstate.fetch()
 
       options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup query (unimplemented)"})
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
@@ -28,7 +30,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
 
       @viz = new Vis2(@$el.find('.visualization'))
 
-      @input = new Input(@$el.find('.input'))
+      applyResetButton = @config.get('task') && config.get('task').length > 1
+      @input = new Input(@$el.find('.input'), applyResetButton)
       @input.render()
       _.bindAll @, "submitQuery"
       @input.on 'query', @submitQuery
@@ -37,7 +40,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
 
       @setTask()
 
-      @history = [""]
+      @history = []
       @currentIndex = 0
       @input.on "loadHistory", (tempFuture) =>
         return if @currentIndex == 0
@@ -45,28 +48,35 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
           @addToHistory(tempFuture)
         @currentIndex--
         @input.setQuery(@history[@currentIndex])
+        @input.enableFuture()
+        if @currentIndex == 0
+          @input.disablePast()
 
       @input.on "loadFuture", () =>
         return if @currentIndex == @history.length-1
         @currentIndex++
         @input.setQuery(@history[@currentIndex])
+        if @currentIndex == @history.length-1
+          @input.disableFuture()
 
-      q = new Cypher()
+      #@userstateDfd.done => @createCypher()
+      @createCypher()
+
+    createCypher: ->
+      q = new Cypher(@userstate.get("uuid"))
       q.submitQuery("create (n{}) delete n").done (res) =>
         @viz.draw(JSON.parse(res).visualization)
-        #@viz.setWidth(700)
 
     setTask: ->
       taskDiv = @$el.find('.task')
-      taskDiv.show()
       if @config.get("task")
+        taskDiv.show()
         taskDiv.text(@config.get('task'))
       else
         taskDiv.hide()
 
-
     submitQuery: (query) ->
-      q = new Cypher()
+      q = new Cypher(@userstate.get("uuid"))
       q.submitQuery(query).done (res) =>
         json = JSON.parse(res)
         if json.error
@@ -81,3 +91,5 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
       @history = @history.splice 0, @currentIndex+1
       @history.push(query)
       @currentIndex = @history.length-1
+      @input.enablePast()
+      @input.disableFuture()

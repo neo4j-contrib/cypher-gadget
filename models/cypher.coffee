@@ -2,8 +2,8 @@ define [], () ->
 
   class Cypher
 
-    initialize: ->
-      #$.cookie("JSESSIONID", "k8wk6v1u50uf18rwzcp9e0mqa")
+    initialize: (uuid) ->
+      $.cookie("XSESSIONID", uuid)
 
     interpret: (data) ->
       results =

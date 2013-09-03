@@ -87,12 +87,14 @@ define ["../color_manager", "libs/d3.min"], (colorManager) ->
         #         return "translate(" + x + "," + y + ") matrix(" + cosinus + ", " + sinus + ", " + -sinus + ", " + cosinus + ", 0 , 0)"
 
     draw: (graph) ->
+      # checks to set a flag whether or not part of the graph will be presented highlighted or not
       selective = false
       _.each graph, (g) -> _.each g, (d) -> selective = true if d.selected
 
       # used later to tell if two nodes are connected to each other
       @indexLinkRef = _.map graph.links, (link) -> link.start+','+link.end
 
+      # dynamically sets link distances based on number of nodes in graph
       d = 2*(@width || 725) /graph.nodes.length
       @force.linkDistance(d)
 
@@ -201,6 +203,7 @@ define ["../color_manager", "libs/d3.min"], (colorManager) ->
         y2 = y2+padding
       if @height/(y2-y1) < @width/(x2-x1)
         scale = @height/(y2-y1)
+        # some geometry to ensure the viz is centered (there's probably a cleaner way...)
         translate = (-x1+(((y2-y1)*@width/@height-(x2-x1))/2))+", "+(-y1)
       else
         scale = @width/(x2-x1)

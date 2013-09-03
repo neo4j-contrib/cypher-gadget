@@ -9,14 +9,14 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         </div>
         <div class='input-controls'>
           <ul class='directional-controls'>
-            <li><div class='back-button'><i class='icon-arrow-left'></i></div></li>
-            <li><div class='forward-button'><i class='icon-arrow-right'></i></div></li>
+            <li><div class='disabled back-button'><i class='icon-arrow-left'></i></div></li>
+            <li><div class='disabled forward-button'><i class='icon-arrow-right'></i></div></li>
           </ul>
           <div class='execute-button'><i class='icon-play'></i></div>
         </div>
       </div>
       <div class='input-subcontrols'>
-        <button class='empty'><i class='icon-trash'></i> Clear db</button>
+        <button class='empty'><%= resetBtnMsg %></button>
         <div class="presets-dropdown btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
             Presets (undesigned)
@@ -33,6 +33,8 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     events:
       'click .execute-button': 'execute'
+      'click .back-button': 'onBackClick'
+      'click .forward-button': 'onForwardClick'
       'click .empty': 'onEmptyDBClick'
       'click .preset': 'onPresetSelect'
       'keyup .query': 'onQueryKeyup'
@@ -40,8 +42,9 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     initialize: (@$el) ->
       _.bindAll @, "onQueryKeyup"
 
-    render: ->
-      @$el.html _.template @tpl, presets:_.keys(presets)
+    render: (resettable) ->
+      resetBtnMsg = if resettable then "<i class='icon-trash'></i> Reset db" else "<i class='icon-trash'></i> Clear db"
+      @$el.html _.template @tpl, presets:_.keys(presets), resetBtnMsg: resetBtnMsg
       cmOptions =
         mode: "cypher"
         theme:"neo"
@@ -58,6 +61,12 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     onEmptyDBClick: ->
       @trigger 'query', "START n = node(*) MATCH n-[r?]-() DELETE n, r;"
+
+    onBackClick: (e) ->
+      @trigger "loadHistory"
+
+    onForwardClick: (e) ->
+      @trigger "loadFuture"
 
     onPresetSelect: (e) ->
       presetText = presets[$(e.target).data("value")]
@@ -82,3 +91,15 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     setQuery: (query) ->
       @cm.setValue(query)
+
+    enableFuture: ->
+      @$el.find('.forward-button').removeClass('disabled')
+
+    enablePast: ->
+      @$el.find('.back-button').removeClass('disabled')
+
+    disableFuture: ->
+      @$el.find('.forward-button').addClass('disabled')
+
+    disablePast: ->
+      @$el.find('.back-button').addClass('disabled')

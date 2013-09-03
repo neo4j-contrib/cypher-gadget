@@ -314,9 +314,13 @@ text.shadow {
 }
 
 .directional-controls div {
-  background-color: #ececec;
   width: 25px;
   height: 25px;
+  background-color: #ccc;
+}
+
+.directional-controls div.disabled {
+  background-color: #ececec;
 }
 
 .directional-controls i {
