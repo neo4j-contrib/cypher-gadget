@@ -8,17 +8,33 @@ define ["../color_manager", "libs/d3.min"], (colorManager) ->
       svg = d3.select(".visualization").append("svg")
                 .attr("width", @width)
                 .attr("height", @height)
-                .attr("viewBox", "0 0 "+@width+" "+@height)
+                #.attr("viewBox", "0 0 "+@width+" "+@height)
       @viz = svg.append("g")
+
+      # create markerheads
+      @viz.append("defs").selectAll("marker")
+            .data(["arrowhead", "faded-arrowhead"])
+          .enter().append("marker")
+            .attr("id", String)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 17)
+            .attr("refY", 5)
+            .attr("markerUnits", "strokeWidth")
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 3.5)
+            .attr("orient", "auto")
+            .attr("preserveAspectRatio", "xMinYMin")
+          .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z")
 
       @force = d3.layout.force()
                         .charge(-380)
                         .linkDistance(100)
-                        .friction(0.7)
+                        .friction(0.5)
                         .gravity(0.5)
                         .size([@width, @height])
 
-      throttledFrame = _.throttle(((a,b,c,d)=>@frameGadget(a,b,c,d)), 3000)
+      throttledFrame = _.throttle(((a,b,c,d)=>@frameViz(a,b,c,d, 40, 360)), 3000)
 
       @force.on "tick", =>
         ### in case different links between two nodes are ever needed
@@ -82,22 +98,6 @@ define ["../color_manager", "libs/d3.min"], (colorManager) ->
 
       @viz.selectAll("g").remove()
       @force.nodes(graph.nodes).links(graph.links).start()
-
-      # create markerheads
-      @viz.append("defs").selectAll("marker")
-            .data(["arrowhead", "faded-arrowhead"])
-          .enter().append("marker")
-            .attr("id", String)
-            .attr("viewBox", "0 0 10 10")
-            .attr("refX", 17)
-            .attr("refY", 5)
-            .attr("markerUnits", "strokeWidth")
-            .attr("markerWidth", 4)
-            .attr("markerHeight", 3.5)
-            .attr("orient", "auto")
-            .attr("preserveAspectRatio", "xMinYMin")
-          .append("path")
-            .attr("d", "M 0 0 L 10 5 L 0 10 z")
 
       @links = @viz.append("g").selectAll("g")
                 .data(graph.links)
@@ -193,15 +193,18 @@ define ["../color_manager", "libs/d3.min"], (colorManager) ->
     setWidth: (@width) ->
       #d3.select('svg').transition().attr('width', @width+65)
 
-    frameGadget: (x1, x2, y1, y2) ->
-      if y2-y1 > x2-x1
+    frameViz: (x1, x2, y1, y2, padding, rightPadding) ->
+      if padding
+        x1 = x1-padding
+        x2 = if rightPadding then x2+padding+rightPadding else x2+padding
+        y1 = y1-padding
+        y2 = y2+padding
+      if @height/(y2-y1) < @width/(x2-x1)
         scale = @height/(y2-y1)
-        pad = 200/scale
-        translate = (-x1+pad)+", "+(-y1-pad)
+        translate = (-x1+(((y2-y1)*@width/@height-(x2-x1))/2))+", "+(-y1)
       else
         scale = @width/(x2-x1)
-        pad = 200/scale
-        translate = -(x1+pad)+", "+(-y1-pad)#+-(y1+(y2-y1)/2)
+        translate = (-x1)+", "+(-y1+(((x2-x1)*@height/@width-(y2-y1))/2))
       @viz.transition().attr("transform", "scale("+scale+")translate("+translate+")")
 
 

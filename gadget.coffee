@@ -3,6 +3,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
   class CypherGadget
     tpl: """
       <div class="cypherGadget">
+        <div class="task"></div>
         <div class="visualization"></div>
         <div class="input"></div>
         <div class="query-table"></div>
@@ -14,6 +15,13 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
       @$el = options.$el
       @player = options.player
       @player.on "domReady", @render, @
+      @config = options.config
+      @config.on "change:task", @setTask, @
+
+      options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup query (unimplemented)"})
+      options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
+      options.propertySheetSchema.set('cypherSetup3', {type:'Text', title:"Task (unimplemented)"})
+      options.propertySheetSchema.set('cypherSetup4', {type:'Text', title:"Task-check (unimplemented)"})
 
     render: ->
       @$el.html(@tpl)
@@ -26,6 +34,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
       @input.on 'query', @submitQuery
 
       @table = new Table(@$el.find('.query-table'))
+
+      @setTask()
 
       @history = [""]
       @currentIndex = 0
@@ -45,6 +55,15 @@ define ["views/input", "views/table/table", "views/visualization", "views/vis2",
       q.submitQuery("create (n{}) delete n").done (res) =>
         @viz.draw(JSON.parse(res).visualization)
         #@viz.setWidth(700)
+
+    setTask: ->
+      taskDiv = @$el.find('.task')
+      taskDiv.show()
+      if @config.get("task")
+        taskDiv.text(@config.get('task'))
+      else
+        taskDiv.hide()
+
 
     submitQuery: (query) ->
       q = new Cypher()

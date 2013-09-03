@@ -19,11 +19,10 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         <button class='empty'><i class='icon-trash'></i> Clear db</button>
         <div class="presets-dropdown btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            Presets
+            Presets (undesigned)
             <span class="caret"></span>
           </a>
           <ul class="presets dropdown-menu">
-            <li class="preset" data-value=''>Presets (undesigned)</li>
             <% _.each(presets, function(key){ %>
               <li class="preset" data-value=<%= key %>><%= key %></li>
             <% }); %>
