@@ -23,4 +23,4 @@ define ["../../color_manager"], (colorManager) ->
       @data = cell
 
     render: ->
-      _.template @tpl, props: @data.properties, color: colorManager.getColorForLabels(@data.properties._labels)
+      _.template @tpl, props: @data.properties, color: colorManager.getColorForLabels(@data.properties._labels).bright

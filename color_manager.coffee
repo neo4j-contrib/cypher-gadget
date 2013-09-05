@@ -1,6 +1,13 @@
 define [], () ->
 
-  prettyColors = ["#3498db", "#1abc9c", "#e74c3c", "#d2a8e9"]
+  prettyColors = [
+    {bright:"#3498db", dim:"#C9D3DB"} # blue
+    {bright:"#1abc9c", dim:"#DAE9E6"} # green
+    {bright:"#e74c3c", dim:"#E0D6E6"} # red
+    {bright:"#d2a8e9", dim:"#C6BBCC"} # violet
+  ]
+
+  defaultColor = {bright:"#525864", dim:"#ccc"}
 
   class ColorManager
 
@@ -8,9 +15,10 @@ define [], () ->
       @registeredLabelColors = {}
 
     getColorForLabels: (labels) ->
+      return defaultColor unless labels && labels.length > 0
       labelToUse = labels[labels.length-1]
       if !@registeredLabelColors[labelToUse]
-        return "#ccc" if prettyColors.length == 0
+        return defaultColor if prettyColors.length == 0
         color = prettyColors[_.random(0, prettyColors.length-1)]
         prettyColors.splice(_.indexOf(prettyColors, color), 1)
         @registeredLabelColors[labelToUse] = color

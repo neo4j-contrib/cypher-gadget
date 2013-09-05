@@ -2,8 +2,7 @@ define [], () ->
 
   class Cypher
 
-    initialize: (uuid) ->
-      $.cookie("XSESSIONID", uuid)
+    constructor: (@uuid) -> #
 
     interpret: (data) ->
       results =
@@ -29,7 +28,8 @@ define [], () ->
         url: "http://neo4j-training-backend.herokuapp.com/backend/cypher"
         data: query
         dataType: 'text'
+        headers: { "X-Session": 8923982398732 }
         xhrFields: { withCredentials: true }
-        error: (xhr, err, msg) ->
-          errmsg = JSON.parse(xhr.responseText).message
-          $('body').append($("<div class='error'>").text(errmsg))
+
+    empty: ->
+      @submitQuery("START n = node(*) MATCH n-[r?]-() DELETE n, r;")

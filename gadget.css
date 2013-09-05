@@ -38,7 +38,7 @@
 }
 
 .faded-node {
-  stroke: none;
+  stroke: #eee;
   fill: rgb(220, 220, 230);
   stroke-width: 2px;
 }
@@ -80,8 +80,28 @@ text.shadow {
   width: 100%;
 }
 
-.error{
-  color:red;
+.error-container {
+  position: absolute;
+  bottom: 142px;
+  left: 10px;
+  background-color: rgb(255, 229, 229);
+  border-radius: 3px;
+  width: 706px;
+  color: red;
+}
+
+.error-msg {
+  padding: 3px;
+  color: red;
+  font-weight: bold;
+  max-width: 670px;
+}
+
+.error-dismiss {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
 }
 
 
@@ -363,6 +383,25 @@ text.shadow {
   top: auto !important;
   bottom: 100%;
 }
+
+/* task */
+
+.task {
+  margin: -2px auto;
+  width: 600px;
+  text-align: center;
+  background-color: rgba(255,255,255,0.5);
+  padding: 10px;
+  border-radius: 3px;
+  color: #3498db;
+  font-weight: bold;
+  font-family: Helvetica;
+  
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  -moz-box-shadow:    0 1px 2px rgba(0,0,0,0.07);
+  box-shadow:         0 1px 2px rgba(0,0,0,0.07);
+}
+
 
 /* kill me */
 

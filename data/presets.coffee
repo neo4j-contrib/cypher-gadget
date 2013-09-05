@@ -4,15 +4,26 @@ define [], () ->
                         \nRETURN n as node_a, r as relates_to, m as node_b"
     "all_nodes": "MATCH (x)
                   \nRETURN x"
+    "create_node": "create ({name:'Bob'})"
+    "create_rel": "MATCH a, b
+                  \nWHERE a.name = 'Bert' AND b.name = 'Ernie'
+                  \nCREATE a-[r:LIKES]->b
+                  \nRETURN r"
+    "delete_node": "START b=node(*)
+                  \nWHERE b.name='Bob'
+                  \nDELETE b"
+    "a_nodes_relationships": "MATCH a:Actor-[r]->b
+                            \nWHERE a.name = 'Keanu Reeves'
+                            \nRETURN a, r, b"
     "colors":"CREATE (r {name:'red'}), (b {name:'blue'})
               \nCREATE (col {name:'color'})
               \nCREATE r-[:IS]->col, b-[:IS]->col"
-    "matrix":"CREATE (matrix1 {id : '603', title : 'The Matrix', year : '1999-03-31'}),
-              \n(matrix2 {id : '604', title : 'The Matrix Reloaded', year : '2003-05-07'}),
-              \n(matrix3 {id : '605', title : 'The Matrix Revolutions', year : '2003-10-27'}),
-              \n(neo {name:'Keanu Reeves'}),
-              \n(morpheus {name:'Laurence Fishburne'}),
-              \n(trinity {name:'Carrie-Anne Moss'}),
+    "matrix":"CREATE (matrix1:Movie {id : '603', title : 'The Matrix', year : '1999-03-31'}),
+              \n(matrix2:Movie {id : '604', title : 'The Matrix Reloaded', year : '2003-05-07'}),
+              \n(matrix3:Movie {id : '605', title : 'The Matrix Revolutions', year : '2003-10-27'}),
+              \n(neo:Actor {name:'Keanu Reeves'}),
+              \n(morpheus:Actor {name:'Laurence Fishburne'}),
+              \n(trinity:Actor {name:'Carrie-Anne Moss'}),
               \n(matrix1)<-[:ACTS_IN {role : 'Neo'}]-(neo),
               \n(matrix2)<-[:ACTS_IN {role : 'Neo'}]-(neo),
               \n(matrix3)<-[:ACTS_IN {role : 'Neo'}]-(neo),

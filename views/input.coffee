@@ -43,7 +43,7 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       _.bindAll @, "onQueryKeyup"
 
     render: (resettable) ->
-      resetBtnMsg = if resettable then "<i class='icon-trash'></i> Reset db" else "<i class='icon-trash'></i> Clear db"
+      resetBtnMsg = if resettable then "<i class='icon-refresh'></i> Reset db" else "<i class='icon-trash'></i> Clear db"
       @$el.html _.template @tpl, presets:_.keys(presets), resetBtnMsg: resetBtnMsg
       cmOptions =
         mode: "cypher"
@@ -60,7 +60,7 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       @trigger 'query', @cm.getValue()
 
     onEmptyDBClick: ->
-      @trigger 'query', "START n = node(*) MATCH n-[r?]-() DELETE n, r;"
+      @trigger 'reset'
 
     onBackClick: (e) ->
       @trigger "loadHistory"
