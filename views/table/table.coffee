@@ -14,19 +14,19 @@ define ["./node", "./relationship"], (Node, Relationship) ->
     initialize: (@$el) -> #
 
     render: (data, queryEcho) ->
-      @$el.html _.template @tpl, _.extend data, {echo:queryEcho}
+      @$el.html _.template @tpl, _.extend data, {echo:""} # {echo:queryEcho}
       nodeOrRel = false # flag to hide expanders
       _.each data.rows, (row) =>
         tr = $("<tr>")
         @$el.find('table').append(tr)
         _.each row, (cell) ->
           if cell.type == "node"
-            cell = new Node(cell)
-            tr.append cell.render()
+            cellview = new Node(cell)
+            tr.append cellview.render()
             nodeOrRel = true
           else if cell.type == "relationship"
-            cell = new Relationship(cell)
-            tr.append cell.render()
+            cellview = new Relationship(cell)
+            tr.append cellview.render()
             nodeOrRel = true
           else
             tr.append $("<td>"+cell+"</td>")

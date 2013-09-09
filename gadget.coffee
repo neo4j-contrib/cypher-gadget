@@ -18,7 +18,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @config = options.config
       @config.on "change:cypherTask", @setTask, @
       @userstate = options.userState
-      @userstateDfd = if @userstate.gadget.get("id") then @userState.fetch() else new $.Deferred().resolve()
+      @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
       options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup query (unimplemented)"})
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
