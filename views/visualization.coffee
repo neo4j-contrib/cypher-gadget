@@ -165,6 +165,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links.exit().remove()
       @links.attr("marker-end", (d) => if @selective && !@selectedLinks[d.id] then "url(#faded-arrowhead)" else "url(#arrowhead)")
             .attr("class", (d) => if @selective && !@selectedLinks[d.id] then "faded-relationship" else "relationship")
+            .filter((l) => @selective && @selectedLinks[l.id])
+              .each((l) -> @parentNode.appendChild(@))
 
       # @pathTexts = @viz.append("g").selectAll("g")
       #                 .data(graph.links)
