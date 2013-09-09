@@ -27,6 +27,13 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
           .append("path")
             .attr("d", "M 0 0 L 10 5 L 0 10 z")
 
+      # empty msg
+      @emptyMsg = @svg.append("text").text("Graph database is empty.")
+                   .attr("class", "emptyMsg")
+                   .attr("x", 350)
+                   .attr("y", 200)
+                   .attr("opacity", 0)
+
       @force = d3.layout.force()
                         .charge(-380)
                         .linkDistance(100)
@@ -88,8 +95,11 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
     create: (graph) ->
       if graph.nodes.length == 0 && graph.links.length == 0
-        console.log 'Visualization is empty (msg in ui coming soon)'
+        @emptyMsg.attr("opacity", 1)
         return
+      else
+        @emptyMsg.attr("opacity", 0)
+
       # dynamically sets link distances based on number of nodes in graph
       d = 2*(@width || 725) /graph.nodes.length
       @force.linkDistance(Math.min(200, d))
@@ -131,6 +141,11 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       return (toAdd.length || toRemove.length) # returns whether or not the set changed
 
     draw: (graph) ->
+      if graph.nodes.length == 0 && graph.links.length == 0
+        @emptyMsg.attr("opacity", 1)
+      else
+        @emptyMsg.attr("opacity", 0)
+
       @create(graph) unless @graphCreated
       didChange1 = @syncGraphData(graph.nodes, @currentNodes)
       didChange2 = @syncGraphData(graph.links, @currentLinks)
@@ -205,6 +220,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @nodeTexts = @viz.append("g").selectAll("g")
       @currentNodes = []
       @currentLinks = []
+      @emptyMsg.attr("opacity", 1)
 
     onNodeHover: (d) ->
       @nodes.style("fill", (n) =>
