@@ -99,7 +99,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @selectedLinks = []
 
       @viz.selectAll("g").remove()
-      selective = false
+      @selective = false
       @currentNodes = graph.nodes
       @currentLinks = graph.links
       @force.nodes(@currentNodes).links(@currentLinks).start()
@@ -132,7 +132,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
 
       # checks to set a flag whether or not part of the graph will be presented highlighted or not
-      selective = _.some graph, (g) -> _.some g, (d) -> d.selected
+      @selective = _.some graph, (g) -> _.some g, (d) -> d.selected
 
       # used later to tell if two nodes are connected to each other
       @indexLinkRef = _.map graph.links, (link) -> link.start+','+link.end
@@ -140,8 +140,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links = @links.data(@force.links())
       @links.enter().append("line")
       @links.exit().remove()
-      @links.attr("marker-end", (d) => if selective && !@selectedLinks[d.id] then "url(#faded-arrowhead)" else "url(#arrowhead)")
-            .attr("class", (d) => if selective && !@selectedLinks[d.id] then "faded-relationship" else "relationship")
+      @links.attr("marker-end", (d) => if @selective && !@selectedLinks[d.id] then "url(#faded-arrowhead)" else "url(#arrowhead)")
+            .attr("class", (d) => if @selective && !@selectedLinks[d.id] then "faded-relationship" else "relationship")
 
       # @pathTexts = @viz.append("g").selectAll("g")
       #                 .data(graph.links)
@@ -150,9 +150,9 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       # @pathTexts.append("text")
       #     .attr("class", "shadow")
-      #     .text (d) -> d.type unless selective && !d.selected
+      #     .text (d) -> d.type unless @selective && !d.selected
 
-      # @pathTexts.append("text").text (d) -> d.type unless selective && !d.selected
+      # @pathTexts.append("text").text (d) -> d.type unless @selective && !d.selected
 
       @nodes = @nodes.data(@force.nodes())
       @nodes.enter().append("circle")
@@ -161,10 +161,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             .on("mouseover", (d) => @onNodeHover(d))
             .on("mouseout", => @onNodeUnhover())
       #@nodes.exit().remove()
-      @nodes.attr("class", (d) => if selective && !@selectedNodes[d.id] then "faded-node" else "node")
+      @nodes.attr("class", (d) => if @selective && !@selectedNodes[d.id] then "faded-node" else "node")
             .style("fill", (d) =>
               color = colorManager.getColorForLabels(d.labels)
-              if selective && !@selectedNodes[d.id] then color.dim else color.bright)
+              if @selective && !@selectedNodes[d.id] then color.dim else color.bright)
 
       @nodeTexts = @nodeTexts.data(@force.nodes())
       gs = @nodeTexts.enter().append("g")
@@ -179,13 +179,13 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       gs.append("text")
           .attr("class", "shadow")
           .text (d) -> d.name || d.title
-      @nodeTexts.attr("opacity", (d) => if selective && !@selectedNodes[d.id] then 0 else 1)
+      @nodeTexts.attr("opacity", (d) => if @selective && !@selectedNodes[d.id] then 0 else 1)
 
       gs.append("text").text (d) -> d.name || d.title
 
       @force.start() if didChange
 
-      if selective
+      if @selective
         setTimeout((=>@frameOnSelected()), 300)
 
     empty: ->
@@ -200,8 +200,9 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @nodes.style("fill", (n) =>
         if _.indexOf(@indexLinkRef, d.id+","+n.id) > -1 ||
             _.indexOf(@indexLinkRef, n.id+","+d.id) > -1 ||
-            n.id == d.id
-          return if n.labels then colorManager.getColorForLabels(n.labels).bright else "#525864"
+            n.id == d.id ||
+            (@selective && @selectedNodes[n.id])
+          return colorManager.getColorForLabels(n.labels).bright
         else return colorManager.getColorForLabels(n.labels).dim)
         .each (n) ->
           @parentNode.appendChild(@) if n.id == d.id
@@ -214,12 +215,13 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
           .attr("class", "path-texts")
         .append("text")
           .attr("class", "shadow")
-          .text (d) -> d.type #unless selective && !d.selected
+          .text (d) -> d.type #unless @selective && !d.selected
 
       @nodeTexts.attr("opacity", (n) =>
         if _.indexOf(@indexLinkRef, d.id+","+n.id) > -1 ||
             _.indexOf(@indexLinkRef, n.id+","+d.id) > -1 ||
-            n.id == d.id
+            n.id == d.id ||
+            (@selective && @selectedNodes[n.id])
           return 0.5
         else return 0)
         .each (l) ->
@@ -234,15 +236,17 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       # @pathTexts.append("text")
       #     .attr("class", "shadow")
-      #     .text (d) -> d.type unless selective && !d.selected
+      #     .text (d) -> d.type unless @selective && !d.selected
 
-      # @pathTexts.append("text").text (d) -> d.type unless selective && !d.selected
+      # @pathTexts.append("text").text (d) -> d.type unless @selective && !d.selected
 
     onNodeUnhover: ->
-      @nodes.style "fill", (n) -> colorManager.getColorForLabels(n.labels).dim
-      @links.attr("class", "faded-relationship")
-            .attr("marker-end", "url(#faded-arrowhead)")
-      @nodeTexts.attr("opacity", 0)
+      @nodes.style "fill", (d) =>
+        col = colorManager.getColorForLabels(d.labels)
+        if @selective && @selectedNodes[d.id] then col.bright else col.dim
+      @links.attr("class", (d) => if @selective && @selectedLinks[d.id] then "relationship" else "faded-relationship")
+            .attr("marker-end", (d) => if @selective && @selectedLinks[d.id] then "url(#arrowhead)" else "url(#faded-arrowhead)")
+      @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
 
     setPadding: (@rightPadding) -> #
 
@@ -277,5 +281,6 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @viz.transition().attr("transform", "scale("+scale+")translate("+translate+")")
       @viz.selectAll("text").style("font", 10/scale+"px sans-serif")
                             .style("stroke-width", 0.3/scale+"px")
+      @viz.selectAll(".shadow").style("stroke-width", 3/scale+"px")
 
 
