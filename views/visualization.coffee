@@ -167,7 +167,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
               if selective && !@selectedNodes[d.id] then color.dim else color.bright)
 
       @nodeTexts = @nodeTexts.data(@force.nodes())
-      @nodeTexts.enter().append("g")
+      gs = @nodeTexts.enter().append("g")
             .attr("class", "node-texts")
 
       # d3 is annoying me right now, remove two things binded to the data
@@ -176,12 +176,12 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       nt.remove()
 
       # TODO check to make sure this isn't adding a ton of text for no reason
-      @nodeTexts.selectAll("g").append("text")
+      gs.append("text")
           .attr("class", "shadow")
           .text (d) -> d.name || d.title
       @nodeTexts.attr("opacity", (d) => if selective && !@selectedNodes[d.id] then 0 else 1)
 
-      @nodeTexts.append("text").text (d) -> d.name || d.title
+      gs.append("text").text (d) -> d.name || d.title
 
       @force.start() if didChange
 
@@ -273,8 +273,9 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       else
         scale = @width/(x2-x1)
         translate = (-x1)+", "+(-y1+(((x2-x1)*@height/@width-(y2-y1))/2))
+      scale = Math.min(scale, 2)
       @viz.transition().attr("transform", "scale("+scale+")translate("+translate+")")
       @viz.selectAll("text").style("font", 10/scale+"px sans-serif")
-                            .style("stroke-width", 0.3/scale+"px;")
+                            .style("stroke-width", 0.3/scale+"px")
 
 
