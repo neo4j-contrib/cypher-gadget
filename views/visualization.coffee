@@ -5,11 +5,11 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
     constructor: (@$el) ->
       @width = 725
       @height = 600
-      svg = d3.select(".visualization").append("svg")
+      @svg = d3.select(".visualization").append("svg")
                 .attr("width", @width)
                 .attr("height", @height)
                 #.attr("viewBox", "0 0 "+@width+" "+@height)
-      @viz = svg.append("g")
+      @viz = @svg.append("g")
 
       # create markerheads
       @viz.append("defs").selectAll("marker")
@@ -93,6 +93,16 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       # dynamically sets link distances based on number of nodes in graph
       d = 2*(@width || 725) /graph.nodes.length
       @force.linkDistance(Math.min(200, d))
+
+      # dynamically sets visualization height based on number of nodes
+      if graph.nodes.length < 25
+        @height = 400
+      else if graph.nodes.length > 100
+        @height = 600
+      else
+        @height = (graph.nodes.length - 25)*200/75+400
+      @svg.attr("height", @height)
+      @force.size([@width, @height])
 
       # store selected node/link ids so we can use them later (without updating all the data and forcing redraws)
       @selectedNodes = []
