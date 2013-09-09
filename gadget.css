@@ -65,6 +65,12 @@ text.shadow {
   stroke-opacity: .8;
 }
 
+text.emptyMsg {
+  text-anchor: middle;
+  stroke: #858B91;
+  fill: #858B91;
+}
+
 /* html */
 
 .cypherGadget {
@@ -196,6 +202,7 @@ text.shadow {
   font-size: 12px;
   margin: 5px 0px 0px 7px;
   white-space: nowrap;
+  padding: 0;
 }
 
 .node-key {

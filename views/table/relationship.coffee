@@ -6,6 +6,16 @@ define [], () ->
       <td>
         <div class="table-relationship"><i class="icon-long-arrow-right"></i></div>
         <span><%= props._type %></span>
+        <div class="node-properties">
+          <ul>
+            <% _.each(_.omit(props, "_id"), function(value, key){ %>
+              <li>
+                <span class="node-key"><%= key %>:</span>
+                <span class="node-value"><%= value %></span>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
       </td>
     """
 
