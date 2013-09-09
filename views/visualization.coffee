@@ -120,9 +120,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       @viz.selectAll("g").remove()
       @selective = false
-      @currentNodes = graph.nodes
-      @currentLinks = graph.links
-      @force.nodes(@currentNodes).links(@currentLinks).start()
+      @force.nodes(graph.nodes).links(graph.links).start()
       @links = @viz.append("g").selectAll("g")
       @nodes = @viz.append("g").selectAll("g")
       @nodeTexts = @viz.append("g").selectAll("g")
@@ -147,8 +145,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
         @emptyMsg.attr("opacity", 0)
 
       @create(graph) unless @graphCreated
-      didChange1 = @syncGraphData(graph.nodes, @currentNodes)
-      didChange2 = @syncGraphData(graph.links, @currentLinks)
+      didChange1 = @syncGraphData(graph.nodes, @force.nodes())
+      didChange2 = @syncGraphData(graph.links, @force.links())
       didChange = didChange1 || didChange2
 
       # syncs whether node/link is selected
@@ -218,8 +216,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links = @viz.append("g").selectAll("g")
       @nodes = @viz.append("g").selectAll("g")
       @nodeTexts = @viz.append("g").selectAll("g")
-      @currentNodes = []
-      @currentLinks = []
+      @force.nodes([]).links([])
       @emptyMsg.attr("opacity", 1)
 
     onNodeHover: (d) ->
