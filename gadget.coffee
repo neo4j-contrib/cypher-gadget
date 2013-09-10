@@ -67,6 +67,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         q.empty()
 
 
+      @table.on "dismissed", =>
+        @viz.showDefault()
+
       @userstateDfd.done =>
         unless @userstate.get("uuid")
           s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)

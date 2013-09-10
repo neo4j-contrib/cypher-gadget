@@ -123,11 +123,14 @@ text.emptyMsg {
   position: absolute;
   top: 30px;
   right: 10px;
-  height: 300px;
-  overflow-y: auto;
-  max-width: 355px;
   font-family: "Helvetica", sans-serif;
   line-height: 16px;
+}
+
+.table-container {
+  max-height: 350px;
+  overflow-y: auto;
+  max-width: 355px;
 }
 
 .query-table table {
@@ -215,6 +218,28 @@ text.emptyMsg {
   margin: 0px 2px;
   color: #A2A2A2;
   cursor: pointer;
+}
+
+.dismiss {
+  position: absolute;
+  bottom: -20px;
+  right: 0px;
+
+  text-transform: uppercase;
+  background-color: #C2C2C2;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  font-size: 12px;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #ffffff;
+  vertical-align: baseline;
+  border: none;
+}
+
+.dismiss:hover {
+  background-color: #9E9E9E;
 }
 
 /* input */

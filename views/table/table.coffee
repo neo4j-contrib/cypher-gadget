@@ -3,13 +3,18 @@ define ["./node", "./relationship"], (Node, Relationship) ->
   class TableView extends Backbone.View
     tpl: """
       <div class="query-echo"><%= echo %></div>
-      <table>
-        <tr class="header">
-          <td style="visibility:hidden;"></td>
-          <% _.each(columns, function(col) { print('<td>'+col+'</td>') }); %>
-        </tr>
-      </table>
+      <div class="table-container">
+        <table>
+          <tr class="header">
+            <td style="visibility:hidden;"></td>
+            <% _.each(columns, function(col) { print('<td>'+col+'</td>') }); %>
+          </tr>
+        </table>
+      </div>
+      <button class='dismiss'>Dismiss <i class='icon-double-angle-right'></i></button>
     """
+    events:
+      'click .dismiss': 'onDismissClick'
 
     initialize: (@$el) -> #
 
@@ -45,3 +50,7 @@ define ["./node", "./relationship"], (Node, Relationship) ->
               tr.find('.node-properties').hide()
         else
           @$el.find(".header").children().first().hide()
+
+    onDismissClick: ->
+      @$el.empty()
+      @trigger "dismissed"

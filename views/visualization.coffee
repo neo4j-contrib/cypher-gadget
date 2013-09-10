@@ -138,7 +138,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       return (toAdd.length || toRemove.length) # returns whether or not the set changed
 
-    draw: (graph) ->
+    draw: (graph, forceUnselective) ->
       if graph.nodes.length == 0 && graph.links.length == 0
         @emptyMsg.attr("opacity", 1)
       else
@@ -155,7 +155,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
 
       # checks to set a flag whether or not part of the graph will be presented highlighted or not
-      @selective = _.some graph, (g) -> _.some g, (d) -> d.selected
+      if forceUnselective
+        @selective = false
+      else
+        @selective = _.some graph, (g) -> _.some g, (d) -> d.selected
 
       # used later to tell if two nodes are connected to each other
       @indexLinkRef = _.map graph.links, (link) -> link.start+','+link.end
@@ -210,8 +213,14 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       @force.start() if didChange
 
-      if @selective
-        setTimeout((=>@frameOnSelected()), 300)
+      setTimeout((=>@frame()), 100)
+      setTimeout((=>@frame()), 400)
+      setTimeout((=>@frame()), 800)
+
+    showDefault: ->
+      @draw({nodes: @force.nodes(), links: @force.links()}, true)
+      @rightPadding = 0 # this is so ugly, need to get rid of this @rightPadding
+      @frameAll()
 
     empty: ->
       @viz.selectAll("g").remove()
@@ -275,17 +284,17 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
     setPadding: (@rightPadding) -> #
 
-    frameOnSelected: ->
+    frame: ->
+      nodes = if @selectove then @nodes.filter (n) => @selectedNodes[n.id] else @nodes
       xMax = 0
       xMin = Infinity
       yMax = 0
       yMin = Infinity
-      @nodes.each (n) =>
-        if @selectedNodes[n.id]
-          xMax = n.x if n.x > xMax
-          xMin = n.x if n.x < xMin
-          yMax = n.y if n.y > yMax
-          yMin = n.y if n.y < yMin
+      nodes.each (n) =>
+        xMax = n.x if n.x > xMax
+        xMin = n.x if n.x < xMin
+        yMax = n.y if n.y > yMax
+        yMin = n.y if n.y < yMin
 
       @frameViz(xMin, xMax, yMin, yMax, 50, @rightPadding)
 
