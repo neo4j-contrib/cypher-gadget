@@ -43,6 +43,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @history = []
       @currentIndex = 0
+
+      # This logic to be put into the input view, doesn't make sense to handle it out here on this level
       @input.on "loadHistory", (tempFuture) =>
         return if @currentIndex == 0
         if tempFuture
@@ -101,9 +103,12 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @$el.find('.error-msg').text(json.error)
         else
           @addToHistory query
-          @table.render q.interpret(json), query
+          interpreted = q.interpret(json)
           @viz.draw(json.visualization)
-          @viz.setPadding(20+@table.$el.width())
+          if interpreted.rows.length > 0
+            @table.render q.interpret(json), query
+            @viz.setPadding(20+@table.$el.width())
+
       ).fail((xhr, err, msg) => @error.render(msg))
 
     addToHistory: (query) ->
