@@ -368,11 +368,11 @@ text.emptyMsg {
 .directional-controls div {
   width: 25px;
   height: 25px;
-  background-color: #ccc;
+  background-color: #A5A5A5;
 }
 
 .directional-controls div.disabled {
-  background-color: #ececec;
+  background-color: #DBDBDB;
 }
 
 .directional-controls i {
@@ -753,7 +753,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   padding: 0;
 }
 .CodeMirror .CodeMirror-placeholder {
-  color: #e0e2e6;
+  color: #DBDBDB;
 }
 .CodeMirror-lines {
   padding: 0;
@@ -766,7 +766,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 }
 .CodeMirror-linenumber {
   padding: 0;
-  color: #e0e2e5;
+  color: #DBDBDB;
   opacity: 1;
 }
 .CodeMirror {
