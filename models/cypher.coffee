@@ -28,7 +28,7 @@ define [], () ->
         url: "http://neo4j-training-backend.herokuapp.com/backend/cypher"
         data: query
         dataType: 'text'
-        headers: { "X-Session": 8923982398732 }
+        headers: { "X-Session": @uuid }
         xhrFields: { withCredentials: true }
 
     empty: ->
