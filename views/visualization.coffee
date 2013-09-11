@@ -5,7 +5,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
     constructor: (@$el) ->
       @width = 725
       @height = 600
-      @svg = d3.select(".visualization").append("svg")
+      @svg = d3.select(@$el[0]).append("svg")
                 .attr("width", @width)
                 .attr("height", @height)
                 #.attr("viewBox", "0 0 "+@width+" "+@height)
