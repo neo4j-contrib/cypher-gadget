@@ -166,8 +166,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links = @links.data(@force.links())
       @links.enter().append("line")
       @links.exit().remove()
-      @links.attr("marker-end", (d) => if @selective && !@selectedLinks[d.id] then "url(#faded-arrowhead)" else "url(#arrowhead)")
-            .attr("class", (d) => if @selective && !@selectedLinks[d.id] then "faded-relationship" else "relationship")
+      @links.attr("marker-end", (d) => if @selective && @selectedLinks[d.id] then "url(#arrowhead)" else "url(#faded-arrowhead)")
+            .attr("class", (d) => if @selective && @selectedLinks[d.id] then "relationship" else "faded-relationship")
             .filter((l) => @selective && @selectedLinks[l.id])
               .each((l) -> @parentNode.appendChild(@))
 
@@ -189,7 +189,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             .on("mouseover", (d) => @onNodeHover(d))
             .on("mouseout", => @onNodeUnhover())
       #@nodes.exit().remove()
-      @nodes.attr("class", (d) => if @selective && !@selectedNodes[d.id] then "faded-node" else "node")
+      @nodes.attr("class", (d) => if @selective && @selectedNodes[d.id] then "node" else "faded-node")
             .style("fill", (d) =>
               color = colorManager.getColorForLabels(d.labels)
               if @selective && !@selectedNodes[d.id] then color.dim else color.bright)
@@ -207,20 +207,20 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       gs.append("text")
           .attr("class", "shadow")
           .text (d) -> d.name || d.title
-      @nodeTexts.attr("opacity", (d) => if @selective && !@selectedNodes[d.id] then 0 else 1)
+      @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
 
       gs.append("text").text (d) -> d.name || d.title
 
       @force.start() if didChange
 
       setTimeout((=>@frame()), 100)
-      setTimeout((=>@frame()), 400)
-      setTimeout((=>@frame()), 800)
+      setTimeout((=>@frame()), 900)
+      setTimeout((=>@frame()), 2000)
 
     showDefault: ->
       @draw({nodes: @force.nodes(), links: @force.links()}, true)
       @rightPadding = 0 # this is so ugly, need to get rid of this @rightPadding
-      @frameAll()
+      @frame()
 
     empty: ->
       @viz.selectAll("g").remove()
