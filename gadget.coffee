@@ -66,6 +66,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         @viz.empty()
         q = new Cypher(@userstate.get("uuid"))
         q.empty()
+        @table.dismiss()
 
 
       @table.on "dismissed", =>

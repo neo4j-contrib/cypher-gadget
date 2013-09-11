@@ -14,7 +14,7 @@ define ["./node", "./relationship"], (Node, Relationship) ->
       <button class='dismiss'>Dismiss <i class='icon-double-angle-right'></i></button>
     """
     events:
-      'click .dismiss': 'onDismissClick'
+      'click .dismiss': 'dismiss'
 
     initialize: (@$el) -> #
 
@@ -51,6 +51,6 @@ define ["./node", "./relationship"], (Node, Relationship) ->
         else
           @$el.find(".header").children().first().hide()
 
-    onDismissClick: ->
+    dismiss: ->
       @$el.empty()
       @trigger "dismissed"
