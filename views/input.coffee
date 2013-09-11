@@ -16,7 +16,7 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         </div>
       </div>
       <div class='input-subcontrols'>
-        <button class='empty'><%= resetBtnMsg %></button>
+        <button class='empty'><i class='icon-refresh'></i> Reset db</button>
         <div class="presets-dropdown btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
             Presets (undesigned)
@@ -42,9 +42,8 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     initialize: (@$el) ->
       _.bindAll @, "onQueryKeyup"
 
-    render: (resettable) ->
-      resetBtnMsg = if resettable then "<i class='icon-refresh'></i> Reset db" else "<i class='icon-trash'></i> Clear db"
-      @$el.html _.template @tpl, presets:_.keys(presets), resetBtnMsg: resetBtnMsg
+    render:  ->
+      @$el.html _.template @tpl, presets:_.keys(presets)
       cmOptions =
         mode: "cypher"
         theme:"neo"

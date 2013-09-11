@@ -30,8 +30,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @viz = new Visualization(@$el.find('.visualization'))
 
-      applyResetButton = @config.get('cypherTask') && @config.get('cypherTask').length > 1
-      @input = new Input(@$el.find('.input'), applyResetButton)
+      @input = new Input(@$el.find('.input'))
       @input.render()
       _.bindAll @, "submitQuery"
       @input.on 'query', @submitQuery
