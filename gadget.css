@@ -744,7 +744,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 }
 .CodeMirror {
   background-color: transparent;
-  padding: 16px 125px 16px 22px;
+  padding: 16px 125px 16px 16px;
   transist: all;
   height: 70px !important;
 }

@@ -41,27 +41,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
                         .gravity(0.5)
                         .size([@width, @height])
 
-      throttledFrame = _.throttle(((a,b,c,d)=>@frameViz(a,b,c,d, 40)), 3000)
-
       @force.on "tick", =>
-        xMax = 0
-        xMin = Infinity
-        yMax = 0
-        yMin = Infinity
-
         @viz.selectAll("circle")
-          .attr("cx", (d) =>
-            cx = Math.min(@width, Math.max(0, d.x))
-            xMax = cx if cx > xMax
-            xMin = cx if cx < xMin
-            return cx)
-          .attr("cy", (d) =>
-            cy = Math.min(@height, Math.max(0, d.y))
-            yMax = cy if cy > yMax
-            yMin = cy if cy < yMin
-            return cy)
-
-        #throttledFrame(xMin, xMax, yMin, yMax)
+          .attr("cx", (d) => Math.min(@width, Math.max(0, d.x)))
+          .attr("cy", (d) => Math.min(@height, Math.max(0, d.y)))
 
         @nodeTexts.selectAll("text")
           .attr("x", (d) => Math.min(@width, Math.max(0, d.x))+8)
@@ -186,13 +169,16 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @nodes.enter().append("circle")
             .attr("r", 5)
             .call(@force.drag)
+            .each((d) =>
+              d.x = (Math.random()+0.5)*@width/2
+              d.y = (Math.random()+0.5)*@height/2)
             .on("mouseover", (d) => @onNodeHover(d))
             .on("mouseout", => @onNodeUnhover())
       #@nodes.exit().remove()
       @nodes.attr("class", (d) => if @selective && @selectedNodes[d.id] then "node" else "faded-node")
             .style("fill", (d) =>
               color = colorManager.getColorForLabels(d.labels)
-              if @selective && !@selectedNodes[d.id] then color.dim else color.bright)
+              if !@selective || @selectedNodes[d.id] then color.bright else color.dim)
 
       @nodeTexts = @nodeTexts.data(@force.nodes())
       gs = @nodeTexts.enter().append("g")
@@ -213,7 +199,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       @force.start() if didChange
 
-      @frameOverTime(2000)
+      setTimeout (=> @frameOverTime(1000)), 300
 
     showDefault: ->
       @draw({nodes: @force.nodes(), links: @force.links()}, true)
@@ -275,7 +261,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
     onNodeUnhover: ->
       @nodes.style "fill", (d) =>
         col = colorManager.getColorForLabels(d.labels)
-        if @selective && @selectedNodes[d.id] then col.bright else col.dim
+        if !@selective || @selectedNodes[d.id] then col.bright else col.dim
       @links.attr("class", (d) => if @selective && @selectedLinks[d.id] then "relationship" else "faded-relationship")
             .attr("marker-end", (d) => if @selective && @selectedLinks[d.id] then "url(#arrowhead)" else "url(#faded-arrowhead)")
       @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
@@ -283,8 +269,11 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
     setPadding: (@rightPadding) -> #
 
     frameOverTime: (ms) ->
-      for i in [0..ms] by 30
-        setTimeout (=> @frame()), i
+      i = 0
+      step = =>
+        @frame()
+        setTimeout step, 100 if i++*100 < ms
+      step()
 
     frame: ->
       nodes = if @selectove then @nodes.filter (n) => @selectedNodes[n.id] else @nodes
