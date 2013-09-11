@@ -248,6 +248,10 @@ text.emptyMsg {
   position: relative;
 }
 
+.input-subcontrols {
+  position: relative;
+}
+
 .execute {
   position: absolute;
   bottom: 78px;
@@ -268,8 +272,7 @@ text.emptyMsg {
   border: none;
 
   position: relative;
-  bottom: 5px;
-  left: 621px;
+  left: 635px;
 }
 
 .empty:hover {
@@ -291,11 +294,11 @@ text.emptyMsg {
 .input-field {
   position: relative;
   width: 705px;
-  margin: 10px;
+  margin: 10px 10px 0px 10px;
   background-color: #fff;
   color: #525864;
   font-family: "Menlo","Courier New","Terminal",monospace;
-  font-size: 16px;
+  font-size: 13px;
   line-height: 23px;
 
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.07);
@@ -363,6 +366,7 @@ text.emptyMsg {
   list-style-type: none;
   width: 60px;
   margin: 10px auto;
+  font-size: 16px;
 }
 
 .directional-controls div {
@@ -428,25 +432,42 @@ text.emptyMsg {
   color: #3498db;
   font-weight: bold;
   font-family: Helvetica;
-  
+
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.07);
   -moz-box-shadow:    0 1px 2px rgba(0,0,0,0.07);
   box-shadow:         0 1px 2px rgba(0,0,0,0.07);
 }
 
 
-/* kill me */
-
-.gadget {
-  margin: 15px auto;
+.samples-dropdown {
+  position: absolute;
+  left: 10px;
+  top: 5px;
 }
 
-.presets-dropdown {
-  top: 0px;
+.samples-button {
+  text-transform: uppercase;
+  background-color: #C2C2C2;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  font-size: 12px;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #ffffff;
+  vertical-align: baseline;
+  border: none;
+  text-decoration: none;
+  font-family: "Helvetica", sans-serif;
 }
 
+.samples-button:hover {
+  background-color: #BBBBBB;
+}
 
-
+.samples-dropdown.open .samples-button {
+  background-color: #9E9E9E;
+}
 
 
 
@@ -738,13 +759,13 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 
 .code-style {
   font-family: "Menlo", "Courier New", "Terminal", monospace;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 23px;
   -webkit-font-smoothing: initial;
 }
 .CodeMirror {
   background-color: transparent;
-  padding: 16px 125px 16px 16px;
+  padding: 16px 125px 16px 6px;
   transist: all;
   height: 70px !important;
 }

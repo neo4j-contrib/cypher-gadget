@@ -16,11 +16,10 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         </div>
       </div>
       <div class='input-subcontrols'>
-        <button class='empty'><i class='icon-refresh'></i> Reset db</button>
-        <div class="presets-dropdown btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            Presets (undesigned)
-            <span class="caret"></span>
+        <button class='empty'><i class='icon-refresh'></i> Reset</button>
+        <div class="samples-dropdown btn-group">
+          <a class="samples-button dropdown-toggle" data-toggle="dropdown" href="#">
+            Samples <i class="icon-caret-up"></i>
           </a>
           <ul class="presets dropdown-menu">
             <% _.each(presets, function(key){ %>
