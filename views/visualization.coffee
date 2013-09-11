@@ -213,9 +213,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
       @force.start() if didChange
 
-      setTimeout((=>@frame()), 100)
-      setTimeout((=>@frame()), 900)
-      setTimeout((=>@frame()), 2000)
+      @frameOverTime(2000)
 
     showDefault: ->
       @draw({nodes: @force.nodes(), links: @force.links()}, true)
@@ -283,6 +281,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
 
     setPadding: (@rightPadding) -> #
+
+    frameOverTime: (ms) ->
+      for i in [0..ms] by 30
+        setTimeout (=> @frame()), i
 
     frame: ->
       nodes = if @selectove then @nodes.filter (n) => @selectedNodes[n.id] else @nodes
