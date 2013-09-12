@@ -21,7 +21,17 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
-      options.propertySheetSchema.set('cypherSetup', {type:'Select', title:"DB setup key", options: [{val:"", label:"None"}, {val:"users-graph", label:"Actors"}]})
+      options.propertySheetSchema.set('cypherSetup',
+        {
+          type:'Select',
+          title:"DB setup key",
+          options:
+            [
+              {val:"", label:"None"},
+              {val:"users-graph", label:"Actors"}
+            ]
+        }
+      )
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
       options.propertySheetSchema.set('cypherTask', {type:'Text', title:"Task"})
 

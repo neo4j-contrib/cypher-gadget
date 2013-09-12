@@ -5,6 +5,8 @@ define [], () ->
     {bright:"#1abc9c", dim:"#DAE9E6"} # green
     {bright:"#e74c3c", dim:"#E0D6E6"} # red
     {bright:"#d2a8e9", dim:"#C6BBCC"} # violet
+    {bright:"#FCAB33", dim:"#F7DBB7"} # orange
+    {bright:"#2BDAD2", dim:"#CEEDEC"} # indigo-ish
   ]
 
   defaultColor = {bright:"#525864", dim:"#ccc"}

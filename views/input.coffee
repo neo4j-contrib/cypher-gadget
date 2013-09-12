@@ -109,6 +109,7 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         @disablePast()
 
     loadFuture: () =>
+      return if @currentIndex == @history.length
       if @currentIndex == @history.length-1
         @currentIndex++
         @enablePast()
