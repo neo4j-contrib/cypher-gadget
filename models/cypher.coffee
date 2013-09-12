@@ -22,10 +22,13 @@ define [], () ->
 
       return results
 
-    init: ->
+    init: (datasetKey) ->
       $.ajax
         type: "POST"
         url: "http://neo4j-training-backend.herokuapp.com/backend/init"
+        data: JSON.stringify({id:datasetKey})
+        dataType: "json"
+        contentType: "application/json;charset=utf-8"
         headers: { "X-Session": @uuid }
         xhrFields: { withCredentials: true }
 

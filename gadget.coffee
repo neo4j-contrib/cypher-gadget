@@ -20,10 +20,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
-      options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup query (unimplemented)"})
+      options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup key"})
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
       options.propertySheetSchema.set('cypherTask', {type:'Text', title:"Task"})
-      options.propertySheetSchema.set('cypherSetup4', {type:'Text', title:"Task-check (unimplemented)"})
 
     render: ->
       @$el.html(@tpl)
@@ -82,8 +81,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
     createCypher: ->
       q = new Cypher(@userstate.get("uuid"))
-      q.init().done((res) =>
-        @viz.create(JSON.parse(res).visualization)
+      q.init("users-graph" || @config.get("cypherSetup")).done((res) =>
+        @viz.create(res.visualization)
       ).fail((xhr, err, msg) => @error.render(msg))
 
     setTask: ->
