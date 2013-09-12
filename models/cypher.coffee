@@ -22,6 +22,13 @@ define [], () ->
 
       return results
 
+    init: ->
+      $.ajax
+        type: "POST"
+        url: "http://neo4j-training-backend.herokuapp.com/backend/init"
+        headers: { "X-Session": @uuid }
+        xhrFields: { withCredentials: true }
+
     submitQuery: (query) ->
       $.ajax
         type: "POST"

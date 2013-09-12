@@ -82,7 +82,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
     createCypher: ->
       q = new Cypher(@userstate.get("uuid"))
-      q.submitQuery("create (n{}) delete n").done((res) =>
+      q.init().done((res) =>
         @viz.create(JSON.parse(res).visualization)
       ).fail((xhr, err, msg) => @error.render(msg))
 
