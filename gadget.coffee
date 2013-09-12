@@ -29,7 +29,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @viz = new Visualization(@$el.find('.visualization'))
 
-      @input = new Input(@$el.find('.input'))
+      @input = new Input(@$el.find('.input'), @userstate)
       @input.render()
       _.bindAll @, "submitQuery"
       @input.on 'query', @submitQuery
@@ -39,34 +39,11 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @setTask()
 
-      @history = []
-      @currentIndex = 0
-
-      # This logic to be put into the input view, doesn't make sense to handle it out here on this level
-      @input.on "loadHistory", (tempFuture) =>
-        return if @currentIndex == 0
-        if tempFuture
-          @addToHistory(tempFuture)
-        @currentIndex--
-        @input.setQuery(@history[@currentIndex])
-        @input.enableFuture()
-        if @currentIndex == 0
-          @input.disablePast()
-
-      @input.on "loadFuture", () =>
-        return if @currentIndex == @history.length-1
-        @currentIndex++
-        @input.setQuery(@history[@currentIndex])
-        @input.enablePast() unless @currentIndex == 0
-        if @currentIndex == @history.length-1
-          @input.disableFuture()
-
       @input.on "reset", =>
         @viz.empty()
         q = new Cypher(@userstate.get("uuid"))
         q.empty()
         @table.dismiss()
-
 
       @table.on "dismissed", =>
         @viz.showDefault()
@@ -77,7 +54,6 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           uuid = s4()+s4()+s4()+s4()+s4()
           @userstate.save({uuid:uuid})
         @createCypher()
-      #@createCypher()
 
     createCypher: ->
       q = new Cypher(@userstate.get("uuid"))
@@ -101,17 +77,14 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         if json.error
           @$el.find('.error-msg').text(json.error)
         else
-          @addToHistory query
+          @input.addToHistory query
           interpreted = q.interpret(json)
           @viz.draw(json.visualization)
           if interpreted.rows.length > 0
             @table.render q.interpret(json), query
             @viz.setPadding(20+@table.$el.width())
+          else
+            @table.dismiss()
 
       ).fail((xhr, err, msg) => @error.render(msg))
 
-    addToHistory: (query) ->
-      @history.push(query)
-      @currentIndex = @history.length-1
-      @input.enablePast() unless @currentIndex == 0
-      @input.disableFuture()

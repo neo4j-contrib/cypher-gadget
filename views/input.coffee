@@ -43,8 +43,10 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       'click .sample': 'onSampleSelect'
       'keyup .query': 'onQueryKeyup'
 
-    initialize: (@$el) ->
+    initialize: (@$el, @userState) ->
       _.bindAll @, "onQueryKeyup"
+      @history = @userState.get("history") || []
+      @currentIndex = @history.length
 
     render:  ->
       @$el.html _.template @tpl, samples:samples
@@ -66,10 +68,10 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       @trigger 'reset'
 
     onBackClick: (e) ->
-      @trigger "loadHistory"
+      @loadHistory()
 
     onForwardClick: (e) ->
-      @trigger "loadFuture"
+      @loadFuture()
 
     onSampleSelect: (e) ->
       selected = $(e.target).data("value").split("_")
@@ -82,12 +84,12 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       cp = @cm.getCursor()
       if e.keyCode == 38 # up
         if @cursorPos.line == 0 && @cursorPos.ch == 0 && cp.line == 0 && cp.ch == 0
-          @trigger "loadHistory"
+          @loadHistory()
       else if e.keyCode == 40 # down
         lastLine = @cm.lastLine()
         lastLineLength = @cm.getLine(lastLine).length
         if @cursorPos.line == lastLine && @cursorPos.ch == lastLineLength && cp.line == lastLine && cp.ch == lastLineLength
-          @trigger "loadFuture"
+          @loadFuture()
       @cursorPos = @cm.getCursor()
 
     clear: ->
@@ -95,6 +97,22 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     setQuery: (query) ->
       @cm.setValue(query)
+
+    loadHistory: () ->
+      return if @currentIndex == 0
+      @currentIndex--
+      @setQuery(@history[@currentIndex])
+      @enableFuture()
+      if @currentIndex == 0
+        @disablePast()
+
+    loadFuture: () =>
+      return if @currentIndex == @history.length-1
+      @currentIndex++
+      @setQuery(@history[@currentIndex])
+      @enablePast() unless @currentIndex == 0
+      if @currentIndex == @history.length-1
+        @disableFuture()
 
     enableFuture: ->
       @$el.find('.forward-button').removeClass('disabled')
@@ -107,3 +125,11 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     disablePast: ->
       @$el.find('.back-button').addClass('disabled')
+
+    # This is called by parent because parent dictates what queries were successful
+    addToHistory: (query) ->
+      @history.push(query)
+      @userState.save history: @history
+      @currentIndex = @history.length-1
+      @enablePast() unless @currentIndex == 0
+      @disableFuture()
