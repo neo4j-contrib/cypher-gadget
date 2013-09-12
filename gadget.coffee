@@ -17,10 +17,11 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @player.on "domReady", @render, @
       @config = options.config
       @config.on "change:cypherTask", @setTask, @
+      @config.on "change:cypherSetup", @createCypher, @
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
-      options.propertySheetSchema.set('cypherSetup', {type:'Text', title:"DB setup key"})
+      options.propertySheetSchema.set('cypherSetup', {type:'Select', title:"DB setup key", options: [{val:"", label:"None"}, {val:"users-graph", label:"Actors"}]})
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
       options.propertySheetSchema.set('cypherTask', {type:'Text', title:"Task"})
 
@@ -29,21 +30,13 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @viz = new Visualization(@$el.find('.visualization'))
 
-      @input = new Input(@$el.find('.input'), @userstate)
-      @input.render()
       _.bindAll @, "submitQuery"
-      @input.on 'query', @submitQuery
 
       @table = new Table(@$el.find('.query-table'))
       @error = new Error(@$el.find('.error-container'))
 
       @setTask()
 
-      @input.on "reset", =>
-        @viz.empty()
-        q = new Cypher(@userstate.get("uuid"))
-        q.empty()
-        @table.dismiss()
 
       @table.on "dismissed", =>
         @viz.showDefault()
@@ -55,9 +48,18 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @userstate.save({uuid:uuid})
         @createCypher()
 
+        @input = new Input(@$el.find('.input'), @userstate)
+        @input.render()
+        @input.on 'query', @submitQuery
+        @input.on 'reset', =>
+          @viz.empty()
+          q = new Cypher(@userstate.get("uuid"))
+          q.empty()
+          @table.dismiss()
+
     createCypher: ->
       q = new Cypher(@userstate.get("uuid"))
-      q.init("users-graph" || @config.get("cypherSetup")).done((res) =>
+      q.init(@config.get("cypherSetup")).done((res) =>
         @viz.create(res.visualization)
       ).fail((xhr, err, msg) => @error.render(msg))
 

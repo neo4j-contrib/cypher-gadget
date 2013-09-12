@@ -60,6 +60,8 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       @cm = new CodeMirror.fromTextArea(@$el.find('.query')[0], cmOptions)
       @cm.on "keyup", @onQueryKeyup
       @cursorPos = @cm.getCursor()
+      if @history.length > 0
+        @enablePast()
 
     execute: ->
       @trigger 'query', @cm.getValue()
@@ -107,12 +109,17 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
         @disablePast()
 
     loadFuture: () =>
-      return if @currentIndex == @history.length-1
-      @currentIndex++
-      @setQuery(@history[@currentIndex])
-      @enablePast() unless @currentIndex == 0
       if @currentIndex == @history.length-1
+        @currentIndex++
+        @enablePast()
         @disableFuture()
+        @setQuery("")
+      else
+        @currentIndex++
+        @setQuery(@history[@currentIndex])
+        @enablePast() unless @currentIndex == 0
+        if @currentIndex == @history.length-1
+          @disableFuture()
 
     enableFuture: ->
       @$el.find('.forward-button').removeClass('disabled')
