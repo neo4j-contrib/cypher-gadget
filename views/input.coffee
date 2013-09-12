@@ -22,11 +22,11 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
             Samples <i class="icon-caret-up"></i>
           </a>
           <ul class="samples dropdown-menu">
-            <span>Reading</span>
+            <span class="samples-label">Reading</span>
             <% _.each(samples.read, function(sample, index){ %>
               <li class="sample" data-value=<%= "read_"+index %>><%= sample.desc %></li>
             <% }); %>
-            <span>Writing</span>
+            <span class="samples-label">Writing</span>
             <% _.each(samples.write, function(sample, index){ %>
               <li class="sample" data-value=<%= "write_"+index %>><%= sample.desc %></li>
             <% }); %>
