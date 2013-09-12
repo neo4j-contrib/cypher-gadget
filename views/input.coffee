@@ -1,4 +1,4 @@
-define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeholder", "libs/bootstrap-dropdown.js"], (presets) ->
+define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeholder", "libs/bootstrap-dropdown.js"], (samples) ->
 
   class Input extends Backbone.View
 
@@ -21,9 +21,14 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
           <a class="samples-button dropdown-toggle" data-toggle="dropdown" href="#">
             Samples <i class="icon-caret-up"></i>
           </a>
-          <ul class="presets dropdown-menu">
-            <% _.each(presets, function(key){ %>
-              <li class="preset" data-value=<%= key %>><%= key %></li>
+          <ul class="samples dropdown-menu">
+            <span>Reading</span>
+            <% _.each(samples.read, function(sample, index){ %>
+              <li class="sample" data-value=<%= "read_"+index %>><%= sample.desc %></li>
+            <% }); %>
+            <span>Writing</span>
+            <% _.each(samples.write, function(sample, index){ %>
+              <li class="sample" data-value=<%= "write_"+index %>><%= sample.desc %></li>
             <% }); %>
           </ul>
         </div>
@@ -35,14 +40,14 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       'click .back-button': 'onBackClick'
       'click .forward-button': 'onForwardClick'
       'click .empty': 'onEmptyDBClick'
-      'click .preset': 'onPresetSelect'
+      'click .sample': 'onSampleSelect'
       'keyup .query': 'onQueryKeyup'
 
     initialize: (@$el) ->
       _.bindAll @, "onQueryKeyup"
 
     render:  ->
-      @$el.html _.template @tpl, presets:_.keys(presets)
+      @$el.html _.template @tpl, samples:samples
       cmOptions =
         mode: "cypher"
         theme:"neo"
@@ -66,8 +71,9 @@ define ["data/presets.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     onForwardClick: (e) ->
       @trigger "loadFuture"
 
-    onPresetSelect: (e) ->
-      presetText = presets[$(e.target).data("value")]
+    onSampleSelect: (e) ->
+      selected = $(e.target).data("value").split("_")
+      presetText = samples[selected[0]][selected[1]].query
       @setQuery(presetText)
 
     onQueryKeyup: (cm, e) ->
