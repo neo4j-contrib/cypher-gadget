@@ -1,4 +1,4 @@
-define ["views/input", "views/table/table", "views/visualization", "views/error", "models/cypher"], (Input, Table, Visualization, Error, Cypher) ->
+define ["views/input", "views/table/table", "views/visualization", "views/error", "models/cypher", "./taskchecker", "data/tasks"], (Input, Table, Visualization, Error, Cypher, taskchecker, taskslib) ->
 
   class CypherGadget
     tpl: """
@@ -16,7 +16,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @player = options.player
       @player.on "domReady", @render, @
       @config = options.config
-      @config.on "change:cypherTask", @setTask, @
+      @config.on "change:cypherTask", @setTaskMsg, @
       @config.on "change:cypherSetup", @createCypher, @
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
@@ -33,19 +33,19 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         }
       )
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
-      options.propertySheetSchema.set('cypherTask', {type:'Text', title:"Task"})
+      options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Task", options:["None"].concat(_.keys(taskslib))})
 
     render: ->
       @$el.html(@tpl)
 
       @viz = new Visualization(@$el.find('.visualization'))
 
-      _.bindAll @, "submitQuery"
+      _.bindAll @, "onQuery"
 
       @table = new Table(@$el.find('.query-table'))
       @error = new Error(@$el.find('.error-container'))
 
-      @setTask()
+      @setTaskMsg()
 
 
       @table.on "dismissed", =>
@@ -60,7 +60,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
         @input = new Input(@$el.find('.input'), @userstate)
         @input.render()
-        @input.on 'query', @submitQuery
+        @input.on 'query', @onQuery
         @input.on 'reset', =>
           @viz.empty()
           q = new Cypher(@userstate.get("uuid"))
@@ -73,13 +73,21 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         @viz.create(res.visualization)
       ).fail((xhr, err, msg) => @error.render(msg))
 
-    setTask: ->
+    setTaskMsg: ->
       taskDiv = @$el.find('.task')
-      if @config.get("cypherTask")
+      task = @config.get("cypherTask")
+      if task && task != "None"
         taskDiv.show()
-        taskDiv.text(@config.get('cypherTask'))
+        taskDiv.text(taskslib[task].message)
       else
         taskDiv.hide()
+
+    onQuery: (query) ->
+      if cypherTask = @config.get("cypherTask")
+        errors = taskchecker.checkInputTasks taskslib[cypherTask], query
+        if errors.length > 0
+          console.log errors
+      @submitQuery(query)
 
     submitQuery: (query) ->
       q = new Cypher(@userstate.get("uuid"))
@@ -97,6 +105,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
             @viz.setPadding(20+@table.$el.width())
           else
             @table.dismiss()
+          if cypherTask = @config.get("cypherTask")
+            errors = taskchecker.checkOutputTasks taskslib[cypherTask], json
+            if errors.length > 0
+              console.log errors
 
       ).fail((xhr, err, msg) => @error.render(msg))
 
