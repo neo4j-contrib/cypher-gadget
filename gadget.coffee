@@ -4,10 +4,12 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
     tpl: """
       <div class="cypherGadget">
         <div class="task"></div>
-        <div class="visualization"></div>
-        <div class="input"></div>
-        <div class="query-table"></div>
-        <div class="error-container"></div>
+        <div class="not-task">
+          <div class="visualization"></div>
+          <div class="input"></div>
+          <div class="query-table"></div>
+          <div class="error-container"></div>
+        </div>
       </div>
     """
 
