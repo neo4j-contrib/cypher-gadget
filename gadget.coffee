@@ -20,27 +20,17 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @config = options.config
       @config.on "change:cypherTask", @setTaskMsg, @
       @config.on "change:cypherSetup", @createCypher, @
+      @config.on "change:cypherTaskJSON", @readTaskJSON, @
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
-      options.propertySheetSchema.set('cypherSetup',
-        {
-          type:'Select',
-          title:"DB setup key",
-          options:
-            [
-              {val:"", label:"None"},
-              {val:"users-graph", label:"Actors"}
-            ]
-        }
-      )
+      options.propertySheetSchema.set('cypherSetup', { type:'Text', title:"DB setup key" })
       options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
       options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Task", options:["None"].concat(_.keys(taskslib))})
+      options.propertySheetSchema.set('cypherTaskJSON', {type:'TextArea', title:"Task JSON"})
 
     render: ->
       @$el.html(@tpl)
-
-      @$el.on("click", => @setSuccessful())
 
       @viz = new Visualization(@$el.find('.visualization'))
 
@@ -53,6 +43,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       @table.on "dismissed", =>
         @viz.showDefault()
+
+      if @config.get("cypherTaskJSON")
+        @readTaskJSON()
 
       @userstateDfd.done =>
         unless @userstate.get("uuid")
@@ -82,10 +75,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
     setTaskMsg: ->
       taskDiv = @$el.find('.task-msg')
-      task = @config.get("cypherTask")
-      if task && task != "None"
+      task = taskslib[@config.get("cypherTask")] || @customTask
+      if task
         taskDiv.show()
-        taskDiv.text(taskslib[task].message)
+        taskDiv.text(task.message)
       else
         taskDiv.hide()
 
@@ -93,10 +86,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @$el.find('.task-error').text(errMsg)
 
     onQuery: (query) ->
-      if cypherTask = @config.get("cypherTask")
-        @errors = taskchecker.checkInputTasks taskslib[cypherTask], query
-        if errors.length > 0
-          @error.render errors[0]
+      if cypherTask = taskslib[@config.get("cypherTask")] || @customTask
+        @errors = taskchecker.checkInputTasks cypherTask, query
+        if @errors.length > 0
+          @error.render @errors[0]
       @submitQuery(query)
 
     setSuccessful: ->
@@ -118,8 +111,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
             @viz.setPadding(20+@table.$el.width())
           else
             @table.dismiss()
-          if cypherTask = @config.get("cypherTask")
-            @errors.concat taskchecker.checkOutputTasks taskslib[cypherTask], json
+          if cypherTask = taskslib[@config.get("cypherTask")] || @customTask
+            @errors = @errors.concat taskchecker.checkOutputTasks cypherTask, json
             if @errors.length > 0
               @error.render @errors[0]
             else
@@ -128,3 +121,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
       ).fail((xhr, err, msg) => @error.render(msg))
 
+    readTaskJSON: ->
+      json = JSON.parse @config.get("cypherTaskJSON")
+      if json.message && json.tasks
+        @customTask = json
+      else
+        @customTask = null
+      @setTaskMsg()

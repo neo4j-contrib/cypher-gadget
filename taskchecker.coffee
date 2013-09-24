@@ -5,7 +5,15 @@ define [], () ->
     checkOutputTasks: (task, json) ->
       outputTasks = _.filter task.tasks, (t) -> t.check == "output"
       results = _.map outputTasks, (task) =>
-        return task.test(json)
+        if typeof task.test == "string"
+          regexMatch = JSON.stringify(json).match(new RegExp(task.test, "i"))
+          if regexMatch
+            return true
+          else
+            return task.failMsg
+        else if typeof task.test == "function"
+          return task.test(query)
+        else return true
       return _.reject results, (r) -> r == true
 
     # checks the input before it is being sent
@@ -13,13 +21,14 @@ define [], () ->
       inputTasks = _.filter task.tasks, (t) -> t.check == "input"
       results = _.map inputTasks, (task) =>
         if typeof task.test == "string"
-          regexMatch = query.match(task.test)
+          regexMatch = query.match(new RegExp(task.test, "i"))
           if regexMatch
             return true
           else
             return task.failMsg
-        else
+        else if typeof task.test == "function"
           return task.test(query)
+        else return true
       return _.reject results, (r) -> r == true
 
   new Taskchecker()

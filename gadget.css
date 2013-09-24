@@ -357,6 +357,10 @@ text.emptyMsg {
   float: left;
 }
 
+.history-item {
+  padding: 0px 4px;
+}
+
 .back {
   float: left;
 }
