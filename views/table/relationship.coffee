@@ -4,8 +4,7 @@ define [], () ->
 
     tpl: """
       <td>
-        <div class="table-relationship"><i class="icon-long-arrow-right"></i></div>
-        <span><%= props._type %></span>
+        <span class="table-relationship"><%= props._type %></span>
         <div class="node-properties">
           <ul>
             <% _.each(_.omit(props, "_id"), function(value, key){ %>

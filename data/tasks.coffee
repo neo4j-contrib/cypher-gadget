@@ -2,7 +2,7 @@ define [], () ->
 
   return {
     "test": {
-      message: "Look for Keanu"
+      message: "Task: Look for Keanu"
       tasks: [
         {
           check: "input"

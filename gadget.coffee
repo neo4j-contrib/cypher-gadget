@@ -3,7 +3,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
   class CypherGadget
     tpl: """
       <div class="cypherGadget">
-        <div class="task"></div>
+        <div class="task-msg"></div>
         <div class="not-task">
           <div class="visualization"></div>
           <div class="input"></div>
@@ -40,6 +40,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
     render: ->
       @$el.html(@tpl)
 
+      @$el.on("click", => @setSuccessful())
+
       @viz = new Visualization(@$el.find('.visualization'))
 
       _.bindAll @, "onQuery"
@@ -48,7 +50,6 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @error = new Error(@$el.find('.error-container'))
 
       @setTaskMsg()
-
 
       @table.on "dismissed", =>
         @viz.showDefault()
@@ -59,6 +60,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           uuid = s4()+s4()+s4()+s4()+s4()
           @userstate.save({uuid:uuid})
         @createCypher()
+
+        if @userstate.get("successful")
+          @setSuccessful()
 
         @input = new Input(@$el.find('.input'), @userstate)
         @input.render()
@@ -73,10 +77,11 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       q = new Cypher(@userstate.get("uuid"))
       q.init(@config.get("cypherSetup")).done((res) =>
         @viz.create(res.visualization)
+        @table.setMaxHeight @viz.height
       ).fail((xhr, err, msg) => @error.render(msg))
 
     setTaskMsg: ->
-      taskDiv = @$el.find('.task')
+      taskDiv = @$el.find('.task-msg')
       task = @config.get("cypherTask")
       if task && task != "None"
         taskDiv.show()
@@ -84,12 +89,18 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       else
         taskDiv.hide()
 
+    setTaskError: (errMsg) ->
+      @$el.find('.task-error').text(errMsg)
+
     onQuery: (query) ->
       if cypherTask = @config.get("cypherTask")
-        errors = taskchecker.checkInputTasks taskslib[cypherTask], query
+        @errors = taskchecker.checkInputTasks taskslib[cypherTask], query
         if errors.length > 0
-          console.log errors
+          @error.render errors[0]
       @submitQuery(query)
+
+    setSuccessful: ->
+      @$el.find('.task-msg').addClass("successful")
 
     submitQuery: (query) ->
       q = new Cypher(@userstate.get("uuid"))
@@ -108,9 +119,12 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           else
             @table.dismiss()
           if cypherTask = @config.get("cypherTask")
-            errors = taskchecker.checkOutputTasks taskslib[cypherTask], json
-            if errors.length > 0
-              console.log errors
+            @errors.concat taskchecker.checkOutputTasks taskslib[cypherTask], json
+            if @errors.length > 0
+              @error.render @errors[0]
+            else
+              @setSuccessful()
+              @userstate.save("successful", true)
 
       ).fail((xhr, err, msg) => @error.render(msg))
 

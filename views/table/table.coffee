@@ -2,24 +2,30 @@ define ["./node", "./relationship"], (Node, Relationship) ->
 
   class TableView extends Backbone.View
     tpl: """
-      <div class="query-echo"><%= echo %></div>
       <div class="table-container">
         <table>
           <tr class="header">
-            <td style="visibility:hidden;"></td>
+            <div class="dismiss"><i class="icon-caret-right"></i><i class="icon-caret-right"></i></div>
+            <td></td>
             <% _.each(columns, function(col) { print('<td>'+col+'</td>') }); %>
           </tr>
         </table>
       </div>
-      <button class='dismiss'>Dismiss <i class='icon-double-angle-right'></i></button>
+      <div class="table-hidden"><i class="icon-caret-left"></i><i class="icon-caret-left"></i></div>
     """
     events:
       'click .dismiss': 'dismiss'
+      'click .table-hidden': 'undismiss'
 
     initialize: (@$el) -> #
 
     render: (data, queryEcho) ->
-      @$el.html _.template @tpl, _.extend data, {echo:""} # {echo:queryEcho}
+      @$el.html _.template @tpl, data
+
+      @$el.find('.table-hidden').hide()
+
+      @$el.find('.table-container').css("max-height", @maxHeight - 40)
+
       nodeOrRel = false # flag to hide expanders
       _.each data.rows, (row) =>
         tr = $("<tr>")
@@ -52,5 +58,12 @@ define ["./node", "./relationship"], (Node, Relationship) ->
           @$el.find(".header").children().first().hide()
 
     dismiss: ->
-      @$el.empty()
+      @$el.find('.table-container').hide()
+      @$el.find('.table-hidden').show()
       @trigger "dismissed"
+
+    undismiss: ->
+      @$el.find('.table-container').show()
+      @$el.find('.table-hidden').hide()
+
+    setMaxHeight: (@maxHeight) -> #

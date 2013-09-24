@@ -4,44 +4,55 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     tpl: """
       <div class='input-field'>
+        <ul class='top-input-controls'>
+          <li class='execute'>Run</li>
+          <li class='clear'>Clear query</li>
+          <li class='empty'>Revert to original dataset</li>
+          <div style='clear:both;'></div>
+        </ul>
         <div>
           <textarea class='query' placeholder='Type a query here!'></textarea>
         </div>
-        <div class='input-controls'>
-          <ul class='directional-controls'>
-            <li><div class='disabled back-button'><i class='icon-arrow-left'></i></div></li>
-            <li><div class='disabled forward-button'><i class='icon-arrow-right'></i></div></li>
-          </ul>
-          <div class='execute-button'><i class='icon-play'></i></div>
+        <ul class='bottom-input-controls'>
+          <li class='back disabled bottom-control'><i class='icon-caret-left'></i></li>
+          <li class="history-dropdown disabled btn-group bottom-control">
+            <a class="history-button dropdown-toggle" data-toggle="dropdown" href="#">
+              History <i class="icon-caret-up"></i>
+            </a>
+            <ul class="history dropdown-menu">
+            </ul>
+          </li>
+          <li class='forward disabled bottom-control'><i class='icon-caret-right'></i></li>
+          <li class="samples-dropdown btn-group pull-right bottom-control">
+            <a class="samples-button dropdown-toggle" data-toggle="dropdown" href="#">
+              Code Samples <i class="icon-caret-up"></i>
+            </a>
+            <ul class="samples dropdown-menu">
+              <span class="samples-label">Reading</span>
+              <% _.each(samples.read, function(sample, index){ %>
+                <li class="sample" data-value=<%= "read_"+index %>><%= sample.desc %></li>
+              <% }); %>
+              <span class="samples-label">Writing</span>
+              <% _.each(samples.write, function(sample, index){ %>
+                <li class="sample" data-value=<%= "write_"+index %>><%= sample.desc %></li>
+              <% }); %>
+            </ul>
+          </li>
+          <div style='clear:both;'></div>
         </div>
-      </div>
-      <div class='input-subcontrols'>
-        <button class='empty'><i class='icon-refresh'></i> Reset</button>
-        <div class="samples-dropdown btn-group">
-          <a class="samples-button dropdown-toggle" data-toggle="dropdown" href="#">
-            Samples <i class="icon-caret-up"></i>
-          </a>
-          <ul class="samples dropdown-menu">
-            <span class="samples-label">Reading</span>
-            <% _.each(samples.read, function(sample, index){ %>
-              <li class="sample" data-value=<%= "read_"+index %>><%= sample.desc %></li>
-            <% }); %>
-            <span class="samples-label">Writing</span>
-            <% _.each(samples.write, function(sample, index){ %>
-              <li class="sample" data-value=<%= "write_"+index %>><%= sample.desc %></li>
-            <% }); %>
-          </ul>
-        </div>
-      </div>
+      </ul>
     """
 
     events:
-      'click .execute-button': 'execute'
-      'click .back-button': 'onBackClick'
-      'click .forward-button': 'onForwardClick'
+      'click .execute': 'execute'
+      'click .back': 'onBackClick'
+      'click .forward': 'onForwardClick'
       'click .empty': 'onEmptyDBClick'
+      'click .clear': 'onClearClick'
       'click .sample': 'onSampleSelect'
       'keyup .query': 'onQueryKeyup'
+      'click .history-item': 'onHistoryItemSelect'
+      'click .history-button': 'onHistoryClick'
 
     initialize: (@$el, @userState) ->
       _.bindAll @, "onQueryKeyup"
@@ -68,6 +79,9 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     onEmptyDBClick: ->
       @trigger 'reset'
+
+    onClearClick: ->
+      @cm.setValue("")
 
     onBackClick: (e) ->
       @loadHistory()
@@ -100,6 +114,13 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     setQuery: (query) ->
       @cm.setValue(query)
 
+    onHistoryClick: ->
+      @$el.find('.history').empty().html _.map @history.slice(Math.max(@history.length - 10,0), @history.length), (h, i) =>
+        return "<li class='history-item' data-var='history_" + _.indexOf(@history, h) + "'>" + h + "</li>"
+
+    onHistoryItemSelect: (e) ->
+      @cm.setValue @history[$(e.target).data("var").split("_")[1]]
+
     loadHistory: () ->
       return if @currentIndex == 0
       @currentIndex--
@@ -123,16 +144,17 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
           @disableFuture()
 
     enableFuture: ->
-      @$el.find('.forward-button').removeClass('disabled')
+      @$el.find('.forward').removeClass('disabled')
 
     enablePast: ->
-      @$el.find('.back-button').removeClass('disabled')
+      @$el.find('.history-dropdown').removeClass('disabled')
+      @$el.find('.back').removeClass('disabled')
 
     disableFuture: ->
-      @$el.find('.forward-button').addClass('disabled')
+      @$el.find('.forward').addClass('disabled')
 
     disablePast: ->
-      @$el.find('.back-button').addClass('disabled')
+      @$el.find('.back').addClass('disabled')
 
     # This is called by parent because parent dictates what queries were successful
     addToHistory: (query) ->

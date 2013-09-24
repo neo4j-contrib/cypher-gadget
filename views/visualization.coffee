@@ -4,7 +4,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
 
     constructor: (@$el) ->
       @width = 725
-      @height = 600
+      @height = 400
       @svg = d3.select(@$el[0]).append("svg")
                 .attr("width", @width)
                 .attr("height", @height)
@@ -122,6 +122,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       return (toAdd.length || toRemove.length) # returns whether or not the set changed
 
     draw: (graph, forceUnselective) ->
+      window.frame = @frameViz
       if graph.nodes.length == 0 && graph.links.length == 0
         @emptyMsg.attr("opacity", 1)
       else
