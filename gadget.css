@@ -275,14 +275,21 @@ text.emptyMsg {
 }
 
 .top-input-controls li {
-  padding: 0px 10px;
-  margin: 6px 0px;
-  line-height: 16px;
   cursor: pointer;
 }
 
-.top-input-controls li:not(:first-child) {
+.top-control {
+  padding: 0px 10px;
+  margin: 6px 0px;
+  line-height: 16px;
+}
+
+.top-input-controls li:not(:first-child) .top-control {
   border-left: 1px solid #e7e7e7;
+}
+
+.top-input-controls li:first-child {
+  margin-right: -1px;
 }
 
 .top-input-controls li:hover {
@@ -381,6 +388,7 @@ text.emptyMsg {
 .history-button {
   text-decoration: none;
   color: #000;
+  padding: 7px;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
   box-shadow: none !important;
@@ -431,11 +439,13 @@ text.emptyMsg {
 .samples-dropdown {
   float: right;
   font-size: 13px !important;
+  border: none !important;
 }
 
 .samples-button {
   color: #000;
   text-decoration: none;
+  padding: 6px 0px;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
   box-shadow: none !important;

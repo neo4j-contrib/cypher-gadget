@@ -5,9 +5,9 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     tpl: """
       <div class='input-field'>
         <ul class='top-input-controls'>
-          <li class='execute'>Run</li>
-          <li class='clear'>Clear query</li>
-          <li class='empty'>Revert to original dataset</li>
+          <li class='execute'><div class='top-control'>Run</div></li>
+          <li class='clear'><div class='top-control'>Clear query</div></li>
+          <li class='empty'><div class='top-control'>Revert to original dataset</div></li>
           <div style='clear:both;'></div>
         </ul>
         <div>
