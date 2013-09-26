@@ -47,6 +47,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @table.on "dismissed", =>
         @viz.showDefault()
 
+      @table.on "undismissed", =>
+        @viz.draw(@lastViz)
+
       if @config.get("cypherTaskJSON")
         @readTaskJSON()
 
@@ -114,6 +117,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @input.addToHistory query
           interpreted = q.interpret(json)
           @viz.draw(json.visualization)
+          @lastViz = json.visualization # store reference for when table is undismissed
           if interpreted.rows.length > 0
             @table.render q.interpret(json), query
             @viz.setTableDims(@table.$el.width(), @table.$el.height())

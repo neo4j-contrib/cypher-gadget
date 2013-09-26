@@ -65,5 +65,6 @@ define ["./node", "./relationship"], (Node, Relationship) ->
     undismiss: ->
       @$el.find('.table-container').show()
       @$el.find('.table-hidden').hide()
+      @trigger "undismissed"
 
     setMaxHeight: (@maxHeight) -> #
