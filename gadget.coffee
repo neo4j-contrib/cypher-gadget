@@ -116,7 +116,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @viz.draw(json.visualization)
           if interpreted.rows.length > 0
             @table.render q.interpret(json), query
-            @viz.setPadding(20+@table.$el.width())
+            @viz.setTableDims(@table.$el.width(), @table.$el.height())
           else
             @table.dismiss()
           if cypherTask = taskslib[@config.get("cypherTask")] || @customTask

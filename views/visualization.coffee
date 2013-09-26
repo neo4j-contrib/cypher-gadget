@@ -41,40 +41,43 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
                         .gravity(0.5)
                         .size([@width, @height])
 
-      @force.on "tick", =>
-        @viz.selectAll("circle")
-          .attr("cx", (d) => Math.min(@width, Math.max(0, d.x)))
-          .attr("cy", (d) => Math.min(@height, Math.max(0, d.y)))
+      @force.on "tick", => @tick()
 
-        @nodeTexts.selectAll("text")
-          .attr("x", (d) => Math.min(@width, Math.max(0, d.x))+8)
-          .attr("y", (d) => Math.min(@height, Math.max(0, d.y))+3)
+    tick: ->
+      @viz.selectAll("circle")
+        .attr("cx", (d) => Math.min(@width, Math.max(0, d.x)))
+        .attr("cy", (d) => Math.min(@height, Math.max(0, d.y)))
 
-        # straight lines
-        @links.attr("x1", (d) => Math.min(@width, Math.max(0, d.source.x)))
-            .attr("y1", (d) => Math.min(@height, Math.max(0, d.source.y)))
-            .attr("x2", (d) => Math.min(@width, Math.max(0, d.target.x)))
-            .attr("y2", (d) => Math.min(@height, Math.max(0, d.target.y)))
-        ### in case different links between two nodes are ever needed
-        # arcs
-        @links.attr "d", (d) ->
-          dx = d.target.x - d.source.x
-          dy = d.target.y - d.source.y
-          dr = Math.sqrt(dx * dx + dy * dy)
-          return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
-        ###
+      @nodeTexts.selectAll("text")
+        .attr("x", (d) => Math.min(@width, Math.max(0, d.x))+8)
+        .attr("y", (d) => Math.min(@height, Math.max(0, d.y))+3)
 
-        # @pathTexts.attr "transform", (d) ->
-        #         dx = ( d.target.x - d.source.x )
-        #         dy = ( d.target.y - d.source.y )
-        #         dr = Math.sqrt(dx * dx + dy * dy)
-        #         sinus = dy / dr
-        #         cosinus = dx / dr
-        #         l = d.type.length * 4
-        #         offset = ( 1 - ( (l+10) / dr ) ) / 2
-        #         x = ( d.source.x + dx * offset )
-        #         y = ( d.source.y + dy * offset )
-        #         return "translate(" + x + "," + y + ") matrix(" + cosinus + ", " + sinus + ", " + -sinus + ", " + cosinus + ", 0 , 0)"
+      # straight lines
+      @links.attr("x1", (d) => Math.min(@width, Math.max(0, d.source.x)))
+          .attr("y1", (d) => Math.min(@height, Math.max(0, d.source.y)))
+          .attr("x2", (d) => Math.min(@width, Math.max(0, d.target.x)))
+          .attr("y2", (d) => Math.min(@height, Math.max(0, d.target.y)))
+      ### in case different links between two nodes are ever needed
+      # arcs
+      @links.attr "d", (d) ->
+        dx = d.target.x - d.source.x
+        dy = d.target.y - d.source.y
+        dr = Math.sqrt(dx * dx + dy * dy)
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
+      ###
+
+      @pathTexts.attr "transform", (d) ->
+            if d.show
+              dx = ( d.target.x - d.source.x )
+              dy = ( d.target.y - d.source.y )
+              dr = Math.sqrt(dx * dx + dy * dy)
+              sinus = dy / dr
+              cosinus = dx / dr
+              l = d.type.length * 4
+              offset = ( 1 - ( (l+10) / dr ) ) / 2
+              x = ( d.source.x + dx * offset )
+              y = ( d.source.y + dy * offset )
+              return "translate(" + x + "," + y + ") matrix(" + cosinus + ", " + sinus + ", " + -sinus + ", " + cosinus + ", 0 , 0)"
 
     create: (graph) ->
       if graph.nodes.length == 0 && graph.links.length == 0
@@ -105,6 +108,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @selective = false
       @force.nodes(graph.nodes).links(graph.links).start()
       @links = @viz.append("g").selectAll("g")
+      @pathTexts = @viz.selectAll("path-texts")
       @nodes = @viz.append("g").selectAll("g")
       @nodeTexts = @viz.append("g").selectAll("g")
 
@@ -155,16 +159,16 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             .filter((l) => @selective && @selectedLinks[l.id])
               .each((l) -> @parentNode.appendChild(@))
 
-      # @pathTexts = @viz.append("g").selectAll("g")
-      #                 .data(graph.links)
-      #               .enter().append("g")
-      #                 .attr("class", "path-texts")
+      @pathTexts = @viz.append("g").selectAll("g")
+                      .data(@force.links())
+                    .enter().append("g")
+                      .attr("class", "path-texts")
 
-      # @pathTexts.append("text")
-      #     .attr("class", "shadow")
-      #     .text (d) -> d.type unless @selective && !d.selected
+      @pathTexts.append("text")
+          .attr("class", "shadow")
+          .text (d) -> d.type
 
-      # @pathTexts.append("text").text (d) -> d.type unless @selective && !d.selected
+      @pathTexts.append("text").text (d) -> d.type
 
       @nodes = @nodes.data(@force.nodes())
       @nodes.enter().append("circle")
@@ -226,15 +230,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
         .each (n) ->
           @parentNode.appendChild(@) if n.id == d.id
 
-      @links.filter((l) -> l.start == d.id || l.end == d.id)
+      filtered = @links.filter((l) -> l.start == d.id || l.end == d.id)
           .attr("class", "relationship")
           .attr("marker-end", "url(#arrowhead)")
           .each((l) -> @parentNode.appendChild(@)) # put elements on top of non-highlighted elements
-        .append("g")
-          .attr("class", "path-texts")
-        .append("text")
-          .attr("class", "shadow")
-          .text (d) -> d.type #unless @selective && !d.selected
 
       @nodeTexts.attr("opacity", (n) =>
         if _.indexOf(@indexLinkRef, d.id+","+n.id) > -1 ||
@@ -248,16 +247,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             d3.select(@).attr("opacity", 1)
             @parentNode.appendChild(@)
 
-      # @pathTexts = @viz.append("g").selectAll("g")
-      #                 .data(graph.links)
-      #               .enter().append("g")
-      #                 .attr("class", "path-texts")
-
-      # @pathTexts.append("text")
-      #     .attr("class", "shadow")
-      #     .text (d) -> d.type unless @selective && !d.selected
-
-      # @pathTexts.append("text").text (d) -> d.type unless @selective && !d.selected
+      @pathTexts.each (l) -> l.show = true if l.start == d.id || l.end == d.id
+      @tick() # ensure a tick to force label updates to happen (d3 won't tick if idle)
 
     onNodeUnhover: ->
       @nodes.style "fill", (d) =>
@@ -266,8 +257,12 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links.attr("class", (d) => if @selective && @selectedLinks[d.id] then "relationship" else "faded-relationship")
             .attr("marker-end", (d) => if @selective && @selectedLinks[d.id] then "url(#arrowhead)" else "url(#faded-arrowhead)")
       @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
+      @pathTexts.each (l) -> l.show = false
+      @tick()
 
-    setPadding: (@rightPadding) -> #
+    setTableDims: (@tableWidth, @tableHeight) ->
+      # for now, will refine soon
+      @rightPadding = 20+@tableWidth
 
     frameOverTime: (ms) ->
       i = 0
