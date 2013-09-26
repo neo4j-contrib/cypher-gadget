@@ -3,7 +3,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
   class CypherGadget
     tpl: """
       <div class="cypherGadget">
-        <div class="task-msg"></div>
+        <div class="task" style="display:none;">
+          <div class="task-bg"></div>
+          <div class="task-msg"></div>
+        </div>
         <div class="not-task">
           <div class="visualization"></div>
           <div class="input"></div>
@@ -65,6 +68,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           q = new Cypher(@userstate.get("uuid"))
           q.empty()
           @table.dismiss()
+          @setUnsuccessful()
+          @userstate.save("successful", false)
 
     createCypher: ->
       q = new Cypher(@userstate.get("uuid"))
@@ -74,11 +79,11 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       ).fail((xhr, err, msg) => @error.render(msg))
 
     setTaskMsg: ->
-      taskDiv = @$el.find('.task-msg')
+      taskDiv = @$el.find('.task')
       task = taskslib[@config.get("cypherTask")] || @customTask
       if task
         taskDiv.show()
-        taskDiv.text(task.message)
+        taskDiv.find('.task-msg').text(task.message)
       else
         taskDiv.hide()
 
@@ -93,7 +98,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @submitQuery(query)
 
     setSuccessful: ->
-      @$el.find('.task-msg').addClass("successful")
+      @$el.find('.task-bg').addClass("successful")
+
+    setUnsuccessful: ->
+      @$el.find('.task-bg').removeClass("successful")
 
     submitQuery: (query) ->
       q = new Cypher(@userstate.get("uuid"))

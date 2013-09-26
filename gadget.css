@@ -472,19 +472,31 @@ text.emptyMsg {
 
 /* task */
 
+.task {
+  position: relative;
+}
+
 .task-msg {
   width: 100%;
-  background-color: #BFBFBF;
   padding: 8px 12px;
   color: #fff;
   font-size: 14px;
+  position: relative;
+}
+
+.task-bg {
+  background-color: #BFBFBF;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
 }
 
 .not-task {
   position: relative;
 }
 
-.task-msg.successful {
+.task-bg.successful {
   background-color: #8DC35D;
 }
 
