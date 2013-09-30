@@ -73,6 +73,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @table.dismiss()
           @setUnsuccessful()
           @userstate.save("successful", false)
+          @createCypher()
 
     createCypher: ->
       @cypher = new Cypher(@userstate.get("uuid"), @config.get("cypherSetup"))
@@ -109,6 +110,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
     submitQuery: (query) ->
       @cypher.submitQuery(query).done((res) =>
         @error.dismiss()
+        @input.stopLoadingIndicator()
         json = JSON.parse(res)
         if json.error
           @$el.find('.error-msg').text(json.error)

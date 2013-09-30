@@ -5,7 +5,7 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     tpl: """
       <div class='input-field'>
         <ul class='top-input-controls'>
-          <li class='execute'><div class='top-control'>Run</div></li>
+          <li class='execute'><div class='top-control run-button'>Run</div></li>
           <li class='clear'><div class='top-control'>Clear query</div></li>
           <li class='empty'><div class='top-control'>Revert to original dataset</div></li>
           <div style='clear:both;'></div>
@@ -76,6 +76,12 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     execute: ->
       @trigger 'query', @cm.getValue()
+      @$el.find('.run-button').css("visibility", "hidden")
+      @loading = new vs.ui.LoadingIndicator @$el.find('.execute')
+
+    stopLoadingIndicator: ->
+      @$el.find('.run-button').css("visibility", "visible")
+      @loading.stop()
 
     onEmptyDBClick: ->
       @trigger 'reset'
