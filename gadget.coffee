@@ -21,8 +21,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @player = options.player
       @player.on "domReady", @render, @
       @config = options.config
+      debounced = _.debounce((=>@createCypher()),2000)
       @config.on "change:cypherTask", @setTaskMsg, @
-      @config.on "change:cypherSetup", @createCypher, @
+      @config.on "change:cypherSetup", debounced, @
       @config.on "change:cypherTaskJSON", @readTaskJSON, @
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
