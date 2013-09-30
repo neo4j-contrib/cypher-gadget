@@ -35,10 +35,10 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
                    .attr("opacity", 0)
 
       @force = d3.layout.force()
-                        .charge(-380)
+                        .charge(-1380)
                         .linkDistance(100)
-                        .friction(0.5)
-                        .gravity(0.5)
+                        .friction(0.3)
+                        .gravity(0.3)
                         .size([@width, @height])
 
       @force.on "tick", => @tick()

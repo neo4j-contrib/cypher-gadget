@@ -2,7 +2,7 @@ define [], () ->
 
   class Cypher
 
-    constructor: (@uuid) -> #
+    constructor: (@uuid, @datasetKey) -> #
 
     interpret: (data) ->
       results =
@@ -22,24 +22,28 @@ define [], () ->
 
       return results
 
-    init: (datasetKey) ->
+    init: ->
       $.ajax
         type: "POST"
-        url: "http://neo4j-training-backend.herokuapp.com/backend/init"
-        data: JSON.stringify({id:datasetKey})
-        dataType: "json"
-        contentType: "application/json;charset=utf-8"
+        url: "http://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
+        #data: JSON.stringify({id:@datasetKey})
+        #dataType: "json"
+        #contentType: "application/json;charset=utf-8"
         headers: { "X-Session": @uuid }
         xhrFields: { withCredentials: true }
 
     submitQuery: (query) ->
       $.ajax
         type: "POST"
-        url: "http://neo4j-training-backend.herokuapp.com/backend/cypher"
+        url: "http://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
         data: query
         dataType: 'text'
         headers: { "X-Session": @uuid }
         xhrFields: { withCredentials: true }
 
     empty: ->
-      @submitQuery("START n = node(*) MATCH n-[r?]-() DELETE n, r;")
+      $.ajax
+        type: "DELETE"
+        url: "http://neo4j-training-backend.herokuapp.com/backend/graph/"+@uuid
+        headers: { "X-Session": @uuid }
+        xhrFields: { withCredentials: true }

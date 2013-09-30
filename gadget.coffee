@@ -28,9 +28,8 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
       options.propertySheetSchema.set('cypherSetup', { type:'Text', title:"DB setup key" })
-      options.propertySheetSchema.set('cypherSetup2', {type:'Text', title:"Initial viz (unimplemented)"})
-      options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Task", options:["None"].concat(_.keys(taskslib))})
-      options.propertySheetSchema.set('cypherTaskJSON', {type:'TextArea', title:"Task JSON"})
+      options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Predefined Task", options:["None"].concat(_.keys(taskslib))})
+      options.propertySheetSchema.set('cypherTaskJSON', {type:'TextArea', title:"Custom Task JSON"})
 
     render: ->
       @$el.html(@tpl)
@@ -57,8 +56,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         unless @userstate.get("uuid")
           s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
           uuid = s4()+s4()+s4()+s4()+s4()
-          @userstate.save({uuid:uuid})
-        @createCypher()
+          @userstate.set({uuid:uuid})
+          @userstate.save()
+        @createCypher() if @config.get("cypherSetup")
 
         if @userstate.get("successful")
           @setSuccessful()
@@ -68,16 +68,15 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         @input.on 'query', @onQuery
         @input.on 'reset', =>
           @viz.empty()
-          q = new Cypher(@userstate.get("uuid"))
-          q.empty()
+          @cypher.empty()
           @table.dismiss()
           @setUnsuccessful()
           @userstate.save("successful", false)
 
     createCypher: ->
-      q = new Cypher(@userstate.get("uuid"))
-      q.init(@config.get("cypherSetup")).done((res) =>
-        @viz.create(res.visualization)
+      @cypher = new Cypher(@userstate.get("uuid"), @config.get("cypherSetup"))
+      @cypher.init().done((res) =>
+        @viz.create(JSON.parse(res).visualization)
         @table.setMaxHeight @viz.height
       ).fail((xhr, err, msg) => @error.render(msg))
 
@@ -107,19 +106,18 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       @$el.find('.task-bg').removeClass("successful")
 
     submitQuery: (query) ->
-      q = new Cypher(@userstate.get("uuid"))
-      q.submitQuery(query).done((res) =>
+      @cypher.submitQuery(query).done((res) =>
         @error.dismiss()
         json = JSON.parse(res)
         if json.error
           @$el.find('.error-msg').text(json.error)
         else
           @input.addToHistory query
-          interpreted = q.interpret(json)
+          interpreted = @cypher.interpret(json)
           @viz.draw(json.visualization)
           @lastViz = json.visualization # store reference for when table is undismissed
           if interpreted.rows.length > 0
-            @table.render q.interpret(json), query
+            @table.render @cypher.interpret(json), query
             @viz.setTableDims(@table.$el.width(), @table.$el.height())
           else
             @table.dismiss()
