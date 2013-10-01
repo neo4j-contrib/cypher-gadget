@@ -132,7 +132,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
               @setSuccessful()
               @userstate.save("successful", true)
 
-      ).fail((xhr, err, msg) => @error.render(msg))
+      ).fail((xhr, err, msg) =>
+        @input.stopLoadingIndicator()
+        @error.render(msg)
+      )
 
     readTaskJSON: ->
       json = JSON.parse @config.get("cypherTaskJSON")
