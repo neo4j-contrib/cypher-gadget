@@ -91,9 +91,6 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       else
         taskDiv.hide()
 
-    setTaskError: (errMsg) ->
-      @$el.find('.task-error').text(errMsg)
-
     onQuery: (query) ->
       if cypherTask = taskslib[@config.get("cypherTask")] || @customTask
         @errors = taskchecker.checkInputTasks cypherTask, query
@@ -113,7 +110,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         @input.stopLoadingIndicator()
         json = JSON.parse(res)
         if json.error
-          @$el.find('.error-msg').text(json.error)
+          @error.render json.error
         else
           @input.addToHistory query
           interpreted = @cypher.interpret(json)
