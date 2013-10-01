@@ -5,7 +5,13 @@ define [], () ->
     checkOutputTasks: (task, json) ->
       outputTasks = _.filter task.tasks, (t) -> t.check == "output"
       results = _.map outputTasks, (task) =>
-        if typeof task.test == "string"
+        if typeof task.results == "string"
+          regexMatch = JSON.stringify(json.json).match(new RegExp(task.results, "i"))
+          if regexMatch
+            return true
+          else
+            return task.failMsg
+        else if typeof task.test == "string"
           regexMatch = JSON.stringify(json).match(new RegExp(task.test, "i"))
           if regexMatch
             return true
