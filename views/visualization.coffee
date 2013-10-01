@@ -38,7 +38,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
                         .charge(-1380)
                         .linkDistance(100)
                         .friction(0.3)
-                        .gravity(0.3)
+                        .gravity(0.5)
                         .size([@width, @height])
 
       @force.on "tick", => @tick()
