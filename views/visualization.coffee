@@ -160,6 +160,7 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @pathTexts = @pathTexts.data(@force.links())
       @pathTexts.enter().append("g")
           .attr("class", "path-texts")
+          .attr("opacity", 0)
       @pathTexts.exit().remove()
 
       @pathTexts.append("text")
