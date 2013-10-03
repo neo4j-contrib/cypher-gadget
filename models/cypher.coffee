@@ -25,7 +25,7 @@ define [], () ->
     init: ->
       $.ajax
         type: "POST"
-        url: "http://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
+        url: "https://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
         #data: JSON.stringify({id:@datasetKey})
         #dataType: "json"
         #contentType: "application/json;charset=utf-8"
@@ -35,7 +35,7 @@ define [], () ->
     submitQuery: (query) ->
       $.ajax
         type: "POST"
-        url: "http://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
+        url: "https://neo4j-training-backend.herokuapp.com/backend/cypher/"+@datasetKey
         data: query
         dataType: 'text'
         headers: { "X-Session": @uuid }
@@ -44,6 +44,6 @@ define [], () ->
     empty: ->
       $.ajax
         type: "DELETE"
-        url: "http://neo4j-training-backend.herokuapp.com/backend/graph/"+@uuid
+        url: "https://neo4j-training-backend.herokuapp.com/backend/graph/"+@uuid
         headers: { "X-Session": @uuid }
         xhrFields: { withCredentials: true }
