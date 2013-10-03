@@ -135,7 +135,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
       )
 
     readTaskJSON: ->
-      return if @config.get("cypherTaskJSON") == ""
+      if @config.get("cypherTaskJSON") == ""
+        @customTask = null
+        return
       json = JSON.parse @config.get("cypherTaskJSON")
       if json.message && json.tasks
         @customTask = json
