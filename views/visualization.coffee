@@ -65,18 +65,17 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
         dr = Math.sqrt(dx * dx + dy * dy)
         return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
       ###
-      if @showingPathTexts
-        @showingPathTexts.attr "transform", (d) ->
-          dx = ( d.target.x - d.source.x )
-          dy = ( d.target.y - d.source.y )
-          dr = Math.sqrt(dx * dx + dy * dy)
-          sinus = dy / dr
-          cosinus = dx / dr
-          l = d.type.length * 4
-          offset = ( 1 - ( (l+10) / dr ) ) / 2
-          x = ( d.source.x + dx * offset )
-          y = ( d.source.y + dy * offset )
-          return "translate(" + x + "," + y + ") matrix(" + cosinus + ", " + sinus + ", " + -sinus + ", " + cosinus + ", 0 , 0)"
+      @pathTexts.attr "transform", (d) ->
+        dx = ( d.target.x - d.source.x )
+        dy = ( d.target.y - d.source.y )
+        dr = Math.sqrt(dx * dx + dy * dy)
+        sinus = dy / dr
+        cosinus = dx / dr
+        l = d.type.length * 4
+        offset = ( 1 - ( (l+10) / dr ) ) / 2
+        x = ( d.source.x + dx * offset )
+        y = ( d.source.y + dy * offset )
+        return "translate(" + x + "," + y + ") matrix(" + cosinus + ", " + sinus + ", " + -sinus + ", " + cosinus + ", 0 , 0)"
 
     create: (graph) ->
       if graph.nodes.length == 0 && graph.links.length == 0
@@ -157,17 +156,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             .filter((l) => @selective && @selectedLinks[l.id])
               .each((l) -> @parentNode.appendChild(@))
 
-      @pathTexts = @pathTexts.data(@force.links())
-      @pathTexts.enter().append("g")
-          .attr("class", "path-texts")
-          .attr("opacity", 0)
+      @pathTexts = @pathTexts.data([])
       @pathTexts.exit().remove()
-
-      @pathTexts.append("text")
-          .attr("class", "shadow")
-          .text (d) -> d.type
-
-      @pathTexts.append("text").text (d) -> d.type
 
       @nodes = @nodes.data(@force.nodes())
       @nodes.enter().append("circle")
@@ -246,10 +236,13 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
             d3.select(@).attr("opacity", 1)
             @parentNode.appendChild(@)
 
-      @showingPathTexts = @pathTexts.filter (l) -> l.start == d.id || l.end == d.id
-      @showingPathTexts.attr("opacity", 1)
-      @pathTexts.filter((l) -> !(l.start == d.id || l.end == d.id))
-        .attr("opacity", 0)
+      @pathTexts = @pathTexts.data(@force.links().filter((l) -> (l.start == d.id || l.end == d.id)))
+      @pathTexts.enter().append("g")
+            .attr("class", "path-texts")
+      @pathTexts.append("text")
+          .attr("class", "shadow")
+          .text (n) -> n.type
+      @pathTexts.append("text").text (n) -> n.type
       @tick() # ensure a tick to force label updates to happen (d3 won't tick if idle)
 
     onNodeUnhover: ->
@@ -259,8 +252,8 @@ define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) 
       @links.attr("class", (d) => if @selective && @selectedLinks[d.id] then "relationship" else "faded-relationship")
             .attr("marker-end", (d) => if @selective && @selectedLinks[d.id] then "url(#arrowhead)" else "url(#faded-arrowhead)")
       @nodeTexts.attr("opacity", (d) => if @selective && @selectedNodes[d.id] then 1 else 0)
-      @showingPathTexts.attr("opacity", 0)
-      @showingPathTexts = null
+      @pathTexts = @pathTexts.data([])
+      @pathTexts.exit().remove()
       @tick()
 
     setTableDims: (@tableWidth, @tableHeight) ->
