@@ -27,7 +27,7 @@ define [], () ->
       inputTasks = _.filter task.tasks, (t) -> t.check == "input"
       results = _.map inputTasks, (task) =>
         if typeof task.test == "string"
-          regexMatch = query.match(new RegExp(task.test, "i"))
+          regexMatch = query.replace(/(\r\n|\n|\r)/gm,"").match(new RegExp(task.test, "i"))
           if regexMatch
             return true
           else
