@@ -1,4 +1,4 @@
-define ["./node", "./relationship"], (Node, Relationship) ->
+define ["./node", "./relationship", "./collection"], (Node, Relationship, Collection) ->
 
   class TableView extends Backbone.View
     tpl: """
@@ -37,6 +37,10 @@ define ["./node", "./relationship"], (Node, Relationship) ->
             nodeOrRel = true
           else if cell.type == "relationship"
             cellview = new Relationship(cell)
+            tr.append cellview.render()
+            nodeOrRel = true
+          else if cell.type == "collection"
+            cellview = new Collection(cell)
             tr.append cellview.render()
             nodeOrRel = true
           else
