@@ -202,6 +202,12 @@ text.emptyMsg {
   color: #e74c3c;
 }
 
+.collection-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .node-properties ul {
   list-style-type: none;
   font-size: 12px;
