@@ -3,7 +3,7 @@ versal-cypher-gadget
 
 Versal course gadget for Cypher problem solving.
 
-To run, you'll need to publish to versal with the versal sdk (since it depends on the course player for some things). email mikes@versal.com for help as this isn't open to the public yet!
+To run, you'll need to publish to versal with the versal sdk (since it depends on the course player for some things). email frontend@versal.com for help as this isn't open to the public yet!
 
 There is no build process, just `coffee -c .` to compile from coffeescript and publish.
 
