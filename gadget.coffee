@@ -18,19 +18,19 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
     constructor: (options) ->
       @$el = options.$el
-      @player = options.player
-      @player.on "domReady", @render, @
+#      @player = options.player
+#      @player.on "domReady", @render, @
       @config = options.config
       debounced = _.debounce((=>@createCypher()),2000)
-      @config.on "change:cypherTask", @setTaskMsg, @
-      @config.on "change:cypherSetup", debounced, @
-      @config.on "change:cypherTaskJSON", @readTaskJSON, @
+#      @config.on "change:cypherTask", @setTaskMsg, @
+#      @config.on "change:cypherSetup", debounced, @
+#      @config.on "change:cypherTaskJSON", @readTaskJSON, @
       @userstate = options.userState
       @userstateDfd = if @userstate.gadget.get("id") then @userstate.fetch() else new $.Deferred().resolve()
 
-      options.propertySheetSchema.set('cypherSetup', { type:'Text', title:"DB setup key" })
-      options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Predefined Task", options:["None"].concat(_.keys(taskslib))})
-      options.propertySheetSchema.set('cypherTaskJSON', {type:'TextArea', title:"Custom Task JSON"})
+#      options.propertySheetSchema.set('cypherSetup', { type:'Text', title:"DB setup key" })
+#      options.propertySheetSchema.set('cypherTask', {type:'Select', title:"Predefined Task", options:["None"].concat(_.keys(taskslib))})
+#      options.propertySheetSchema.set('cypherTaskJSON', {type:'TextArea', title:"Custom Task JSON"})
 
     render: ->
       @$el.html(@tpl)

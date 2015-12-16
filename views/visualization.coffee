@@ -1,4 +1,5 @@
-define ["../color_manager", "cdn.underscore", "libs/d3.min"], (colorManager, _) ->
+#define ["../color_manager", "../libs/underscore", "../libs/d3.min"], (colorManager, _) ->
+define ["../color_manager"], (colorManager) ->
 
   class Visualization
 
