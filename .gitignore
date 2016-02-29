@@ -1,2 +1,6 @@
 *.js
+!utils/*.js
+
 .DS_Store
+
+.idea

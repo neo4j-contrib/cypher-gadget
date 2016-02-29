@@ -1,7 +1,6 @@
 define [], () ->
-
   return {
-    "test": {
+    test: {
       message: "Task: Look for Keanu"
       tasks: [
         {
@@ -11,9 +10,9 @@ define [], () ->
         }, {
           check: "input"
           test: (query) ->
-            # pass
+# pass
             return true
-            # return msg for failure
+# return msg for failure
         }, {
           check: "output"
           test: (response) ->
