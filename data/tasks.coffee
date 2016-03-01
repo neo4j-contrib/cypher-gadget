@@ -139,7 +139,194 @@ define [], () ->
           "failMsg": "We expected someone else."
         }
       ]
-    }  
+    }
+    allMoviesTomHanksActedIn: {
+      message: "Lab: All Movies Tom Hanks acted in.",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":Person",
+          "failMsg": "You'll want to limit your nodes to ones labeled Person"
+        },
+        {
+          "check": "input",
+          "test": ":ACTED_IN",
+          "failMsg": "Your paths should use the ACTED_IN relationship"
+        },
+        {
+          "check": "input",
+          "test": "\\.name",
+          "failMsg": "You probably want to check the name property"
+        },
+        {
+          "check": "input",
+          "test": "Tom Hanks",
+          "failMsg": "You wanted to look for Tom Hank's movies"
+        },
+        {
+          "check": "output",
+          "results": "Cloud Atlas",
+          "failMsg": "We expected some other movie."
+        }
+      ]
+    }
+    allMoviesKeanuReevesActedIn: {
+      message: "Lab: All Movies Keanu Reeves acted in.",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":Person",
+          "failMsg": "You'll want to limit your nodes to ones labeled Person"
+        },
+        {
+          "check": "input",
+          "test": ":ACTED_IN",
+          "failMsg": "Your paths should use the ACTED_IN relationship"
+        },
+        {
+          "check": "input",
+          "test": "\\.name",
+          "failMsg": "You probably want to check the name property"
+        },
+        {
+          "check": "input",
+          "test": "Keanu Reeves",
+          "failMsg": "You wanted to look for Keanu Reeves's movies"
+        },
+        {
+          "check": "output",
+          "results": "The Matrix",
+          "failMsg": "We expected some other movie."
+        }
+      ]
+    }
+    matchingPathsPractice: {
+      message: "Adding patterns to paths",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":ACTED_IN|:DIRECTED",
+          "failMsg": "Your paths should contain both, the ACTED_IN and DIRECTED relationships."
+        },
+        {
+          "check": "input",
+          "test": "p.?\\s*=",
+          "failMsg": "You should assign the path expression to a path 'p' or 'p1'"
+        }
+      ]
+    }
+    directorsThatActedInTheirMovies: {
+      message: "Lab: Find out which directors also acted in their movies, use what you've learned so far",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":ACTED_IN|:DIRECTED",
+          "failMsg": "Your paths should contain both, the ACTED_IN and DIRECTED relationships."
+        },
+        {
+          "check": "output",
+          "test": "Clint Eastwood",
+          "failMsg": "We expected someone else."
+        }
+      ]
+    }
+    aggregationPratice: {
+      message: "Aggregation",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":Person",
+          "failMsg": "You'll want to start at nodes labeled Person"
+        },
+        {
+          "check": "input",
+          "test": ":ACTED_IN",
+          "failMsg": "Your paths should use the ACTED_IN relationship"
+        },
+        {
+          "check": "input",
+          "test": "(collect|count|avg|min|max)",
+          "failMsg": "You certainly wanted to use an aggregation function"
+        }
+      ]
+    }
+    fiveBusiestActors: {
+      message: "Lab: Find the 5 busiest actors in this dataset, use what you've learned",
+      tasks: [
+        {
+          "check": "input",
+          "test": ":ACTED_IN",
+          "failMsg": "Your paths should use the ACTED_IN relationship"
+        },
+        {
+          "check": "input",
+          "test": "count",
+          "failMsg": "You probably want to count the ocurrences"
+        },
+        {
+          "check": "input",
+          "test": "order by",
+          "failMsg": "Ordering the results makes a lot of sense for top n"
+        },
+        {
+          "check": "input",
+          "test": "desc",
+          "failMsg": "Remember to use the right sort order."
+        },
+        {
+          "check": "input",
+          "test": "limit 5",
+          "failMsg": "You're still interested in the top 5, remember how to limit the output?"
+        },
+        {
+          "check": "output",
+          "test": "Gene Hackman",
+          "failMsg": "We expected someone else."
+        }
+      ]
+    }
+    recommendActorsForKeanu: {
+      message: "Lab: Recommend 3 actors that Keanu Reeves should work with (but hasn't)",
+      tasks: [
+        {
+          "check": "input",
+          "test": "Keanu Reeves",
+          "failMsg": "You should look for Keanu Reeves"
+        },
+        {
+          "check": "input",
+          "test": ":ACTED_IN",
+          "failMsg": "Your paths should use the ACTED_IN relationship several times"
+        },
+        {
+          "check": "input",
+          "test": "count",
+          "failMsg": "You probably want to count the ocurrences"
+        },
+        {
+          "check": "input",
+          "test": "order by",
+          "failMsg": "Ordering the results makes a lot of sense for top n"
+        },
+        {
+          "check": "input",
+          "test": "desc",
+          "failMsg": "Remember to use the right sort order."
+        },
+        {
+          "check": "input",
+          "test": "limit 3",
+          "failMsg": "You're still interested in the top 3, remember how to limit the output?"
+        },
+        {
+          "check": "input",
+          "test": "not",
+          "failMsg": "Did you remember to exclude the ones he already worked with?"
+        }
+      ]
+    }
+
+
   }
 
 # stopped here: https://versal.com/c/z3mdw4/edit/lessons/14
