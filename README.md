@@ -1,24 +1,24 @@
 versal-cypher-gadget
 ====================
 
-Versal course gadget for Cypher problem solving.
+This is the standalone version of the versal course gadget for Cypher problem solving.
 
-To run, you'll need to publish to versal with the versal sdk (since it depends on the course player for some things). email frontend@versal.com for help as this isn't open to the public yet!
-
-There is no build process, just `coffee -c .` to compile from coffeescript and publish.
-
+There is no build process, just `coffee -c .` from the root directory to compile from coffeescript and publish.
+See `test.html` for a working version of the widget.
+You can configure the widget via the url. 
+For example `/test.html?cypherSetup=full&cypherTask=matchByNodeLabel` uses the database called `full` and the task `matchByNodeLabel`. 
 
 Tasks
 ========
 
-You can either create tasks [here](https://github.com/neo4j-contrib/versal-cypher-gadget/blob/master/data/tasks.coffee) which will give you scripting access (will require to republish gadget) or you can input a json blob for tasks in the gadget's properties.
+You can create tasks by adding them to `data/tasks.coffee` and republishing the gadget. 
 
 Here is an example task blob:
 
 
 `{
-  "message": "Lab: Find the 5 busiest actors in this dataset, use what you've learned",
-  "tasks": [
+  message: "Lab: Find the 5 busiest actors in this dataset, use what you've learned",
+  tasks: [
     {
       "check": "input",
       "test": ":ACTED_IN",
@@ -32,7 +32,9 @@ Here is an example task blob:
   ]
 }`
 
-There are two types of task checks, "input" and "output," input checks the query text (as a case-insensitive regex) before it's sent. Output will check the response from the server in **only one** of two ways, either by checking the query response with "results" or by checking the entire graph with "test."
+There are two types of task checks, "input" and "output".
+Input checks the query text as a case-insensitive regex) before it's sent.
+Output check the response from the server in **only one** of two ways, either by checking the query response with "results" or by checking the entire graph with "test."
 
 For example:
 
@@ -47,7 +49,9 @@ For example:
   ]
 }`
 
- will fail with `CREATE {name:"Keanu"}` because "results" checks the response that populates the gadget's query response table.  `CREATE (m {name:"Keanu"}) RETURN m` will succeed, however. As well, instead of "results", `"test": "Keanu Reeves"` in the json above will succeed because now it's checking against the whole graph.
+will fail with `CREATE {name:"Keanu"}` because "results" checks the response that populates the gadget's query response table.
+`CREATE (m {name:"Keanu"}) RETURN m` will succeed, however.
+As well, instead of "results", `"test": "Keanu Reeves"` in the json above will succeed because now it's checking against the whole graph.
 
 Each input task will be checked in order, then each output task in order - if a task fails it will display the failMsg and **not** check subsequent tasks, so one error shows at a time.
 
