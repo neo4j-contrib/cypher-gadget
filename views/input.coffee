@@ -73,15 +73,17 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       @cursorPos = @cm.getCursor()
       if @history.length > 0
         @enablePast()
+      @delegateEvents()
 
     execute: ->
+      console.log("execute",@cm.getValue())
       @trigger 'query', @cm.getValue()
       @$el.find('.run-button').css("visibility", "hidden")
-      @loading = new vs.ui.LoadingIndicator @$el.find('.execute')
+#      @loading = new vs.ui.LoadingIndicator @$el.find('.execute')
 
     stopLoadingIndicator: ->
       @$el.find('.run-button').css("visibility", "visible")
-      @loading.stop()
+#      @loading.stop()
 
     onEmptyDBClick: ->
       @trigger 'reset'
