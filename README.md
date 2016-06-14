@@ -1,9 +1,7 @@
-versal-cypher-gadget
-====================
+cypher-gadget
+=============
 
-Versal course gadget for Cypher problem solving.
-
-To run, you'll need to publish to versal with the versal sdk (since it depends on the course player for some things). email frontend@versal.com for help as this isn't open to the public yet!
+Online course gadget for Cypher problem solving.
 
 There is no build process, just `coffee -c .` to compile from coffeescript and publish.
 
@@ -11,7 +9,7 @@ There is no build process, just `coffee -c .` to compile from coffeescript and p
 Tasks
 ========
 
-You can either create tasks [here](https://github.com/neo4j-contrib/versal-cypher-gadget/blob/master/data/tasks.coffee) which will give you scripting access (will require to republish gadget) or you can input a json blob for tasks in the gadget's properties.
+You can either create tasks [here](https://github.com/neo4j-contrib/cypher-gadget/blob/master/data/tasks.coffee) which will give you scripting access (will require to republish gadget) or you can input a json blob for tasks in the gadget's properties.
 
 Here is an example task blob:
 
