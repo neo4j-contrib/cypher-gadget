@@ -421,6 +421,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 </div>
 <div id="content">
+<script src="../libs/jquery.js"></script>
+<script src="../libs/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="../libs/jquery.modal.min.css" type="text/css" media="screen" />
+<style>
+    .modal {
+        width: 770px;
+        padding: 10px;
+        margin: 0;
+    }
+    .blocker {
+        height: initial;
+    }
+</style>
+<script type="text/javascript">
+    function setGadgetUrl(sel) {
+        var $iframe = $(sel);
+        $iframe.attr("src", $iframe.data("src"));
+    }
+</script>
 <div class="sect2">
 <h3 id="_the_cypher_query_widget_example">The Cypher Query Widget Example</h3>
 <div class="paragraph">
@@ -429,7 +448,8 @@ You can&#8217;t break anything, and if so, just reset the temporary database to 
 </div>
 <div class="sect3">
 <h4 id="_example_gadget_number_one">Example Gadget Number One!</h4>
-<iframe src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<a href="#ex1" onclick="setGadgetUrl('#ex1')" rel="modal:open">Gadget 1</a>
+<iframe id="ex1" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 <div class="paragraph">
 <p>The different widgets use different datasets, depending on the task, but save your changes across sessions.
 For most lab exercises we added helpful checks and messages to guide you along.</p>
@@ -448,13 +468,14 @@ Thinking about them and writing &amp; executing them incrementally helps you muc
 </div>
 <div class="sect3">
 <h4 id="_example_gadget_number_two">Example Gadget Number Two!</h4>
-<iframe src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<a href="#ex2" onclick="setGadgetUrl('#ex2')" rel="modal:open">Gadget 2</a>
+<iframe id="ex2" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-06-13 14:33:45 EDT
+Last updated 2016-06-16 15:24:44 CEST
 </div>
 </div>
 </body>
