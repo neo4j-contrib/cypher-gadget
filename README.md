@@ -1,40 +1,67 @@
 cypher-gadget
 =============
 
-Online course gadget for Cypher problem solving.
+Introduction
+===
 
-There is no build process, just `coffee -c .` to compile from coffeescript and publish.
+This gadget was designed to supplement Cypher courses. 
+[//]: # (Image of final widget here)
+There is no build process, just `coffee -c .` from the root directory to compile from coffeescript and publish.
+See `test.html` for a working version of the a single widget.
+You can configure the widget via the url. 
+For example, `/test.html?cypherSetup=full&cypherTask=matchByNodeLabel` uses the database called `full` and the task `matchByNodeLabel`. 
 
+Dependencies
+===
+
+* [node](https://github.com/creationix/nvm)
+* [coffeescript](http://coffeescript.org/)
+
+Cypher Gadget in Use
+===
+
+The gadget was built to be used while writing training material in asciidoc. 
+See `testCourse.adoc` for an example implementation. 
+To see the gadget in action:
+
+* Compile: `coffee -c .`
+* Edit: `adocExample.adoc`
+* Compile:  `asciidoctor adocExample/adocExample.adoc`
+* Open: `open adocExample/adocExample.html`
 
 Tasks
 ========
 
-You can either create tasks [here](https://github.com/neo4j-contrib/cypher-gadget/blob/master/data/tasks.coffee) which will give you scripting access (will require to republish gadget) or you can input a json blob for tasks in the gadget's properties.
+You can create tasks by adding them to `data/tasks.coffee` and republishing the gadget. 
 
 Here is an example task blob:
 
-
-`{
-  "message": "Lab: Find the 5 busiest actors in this dataset, use what you've learned",
-  "tasks": [
+```json
+{
+    "message": "Lab: Find the 5 busiest actors in this dataset, use what you've learned",
+    "tasks": [
     {
-      "check": "input",
-      "test": ":ACTED_IN",
-      "failMsg": "Your paths should use the ACTED_IN relationship"
+        "check": "input",
+        "test": ":ACTED_IN",
+        "failMsg": "Your paths should use the ACTED_IN relationship"
     },
     {
-      "check": "output",
-      "results": "Gene Hackman",
-      "failMsg": "We expected someone else."
+        "check": "output",
+        "results": "Gene Hackman",
+        "failMsg": "We expected someone else."
     }
   ]
-}`
+}
+```
 
-There are two types of task checks, "input" and "output," input checks the query text (as a case-insensitive regex) before it's sent. Output will check the response from the server in **only one** of two ways, either by checking the query response with "results" or by checking the entire graph with "test."
+There are two types of task checks: "input" and "output".
+Input checks the query text as a case-insensitive regex) before it's sent.
+Output check the response from the server in **only one** of two ways, either by checking the query response with "results" or by checking the entire graph with "test."
 
 For example:
 
-`{
+```json
+{
   "message": "Create a node named 'Keanu Reeves'",
   "tasks": [
     {
@@ -43,11 +70,18 @@ For example:
       "failMsg": "FAIL"
     }
   ]
-}`
+}
+```
 
- will fail with `CREATE {name:"Keanu"}` because "results" checks the response that populates the gadget's query response table.  `CREATE (m {name:"Keanu"}) RETURN m` will succeed, however. As well, instead of "results", `"test": "Keanu Reeves"` in the json above will succeed because now it's checking against the whole graph.
+will fail with `CREATE {name:"Keanu"}` because "results" checks the response that populates the gadget's query response table.
 
-Each input task will be checked in order, then each output task in order - if a task fails it will display the failMsg and **not** check subsequent tasks, so one error shows at a time.
+[//]: # (Image of failure here)
+`CREATE (m {name:"Keanu"}) RETURN m` will succeed, however.
+As well, instead of "results", `"test": "Keanu Reeves"` in the json above will succeed because now it's checking against the whole graph.
+
+[//]: # (Image of success here)
+Each input task will be checked in order, then each output task in order.
+If a task fails it will display the `failMsg` and **not** check subsequent tasks, so one error shows at a time.
 
 The order of precedence for errors is:
 
