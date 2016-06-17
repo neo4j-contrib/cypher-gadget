@@ -51,7 +51,7 @@ Thinking about them and writing & executing them incrementally helps you much mo
 <iframe id="ex2" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 ++++
 
-spamming the page with gadgets:
+spamming the page with gadgets (they should all have the same number of nodes and relationships):
 
 ++++
 <iframe src="../test.html?cypherSetup=full" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
