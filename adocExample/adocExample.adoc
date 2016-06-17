@@ -49,6 +49,7 @@ Thinking about them and writing & executing them incrementally helps you much mo
 ++++
 <a href="#ex2" onclick="setGadgetUrl('#ex2')" rel="modal:open">Gadget 2</a>
 <iframe id="ex2" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+++++
 
 spamming the page with gadgets (they should all have the same number of nodes and relationships):
 
