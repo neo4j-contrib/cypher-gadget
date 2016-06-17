@@ -120,7 +120,7 @@ define [], () ->
         },
         {
           "check": "input",
-          "test": "\\.name",
+          "test": "(\\.name|name:)",
           "failMsg": "You probably want to check the name property"
         },
         {
@@ -155,7 +155,7 @@ define [], () ->
         },
         {
           "check": "input",
-          "test": "\\.name",
+          "test": "(\\.name|name:)",
           "failMsg": "You probably want to check the name property"
         },
         {
@@ -185,7 +185,7 @@ define [], () ->
         },
         {
           "check": "input",
-          "test": "\\.name",
+          "test": "(\\.name|name:)",
           "failMsg": "You probably want to check the name property"
         },
         {

@@ -1,10 +1,10 @@
-versal-cypher-gadget
-====================
+cypher-gadget
+=============
 
 Introduction
 ===
 
-This is the standalone version of the versal course gadget for Cypher problem solving.
+This gadget was designed to supplement Cypher courses. 
 [//]: # (Image of final widget here)
 There is no build process, just `coffee -c .` from the root directory to compile from coffeescript and publish.
 See `test.html` for a working version of the a single widget.
@@ -17,12 +17,17 @@ Dependencies
 * [node](https://github.com/creationix/nvm)
 * [coffeescript](http://coffeescript.org/)
 
-Versal Cypher Gadget in Use
+Cypher Gadget in Use
 ===
 
 The gadget was built to be used while writing training material in asciidoc. 
 See `testCourse.adoc` for an example implementation. 
-You can edit adocExample.adoc, compile it using `asciidoctor `asciidoctor adocExample/adocExample.adoc`, then `open `asciidoctor adocExample/adocExample.html` to view a sample course page. 
+To see the gadget in action:
+
+* Compile: `coffee -c .`
+* Edit: `adocExample.adoc`
+* Compile:  `asciidoctor adocExample/adocExample.adoc`
+* Open: `open adocExample/adocExample.html`
 
 Tasks
 ========
