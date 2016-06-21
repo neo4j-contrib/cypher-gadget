@@ -1,6 +1,7 @@
 *.js
 !libs/*.js
 !utils/*.js
+!adocExample/*.js
 
 .DS_Store
 
