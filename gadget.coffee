@@ -77,7 +77,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
             @createCypher()
 
       createCypher: ->
-        @cypher = new Cypher(@userstate.get("uuid"), @config.get("cypherSetup"))
+        @cypher = new Cypher(@userstate.get("uuid"), @config.get("cypherSetup"), @config.get("host"))
         @cypher.init().done((res) =>
           @viz.create(JSON.parse(res).visualization)
           @table.setMaxHeight @viz.height

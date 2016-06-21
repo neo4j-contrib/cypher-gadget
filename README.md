@@ -89,3 +89,10 @@ The order of precedence for errors is:
 - Input
 - Output "results" (check query response)
 - Output "test" (check graph after query)
+
+Usage of query parameters:
+
+http://localhost:8000/test.html?host=http://localhost:8080&cypherSetup=lesson1
+
+* host: backend host (instance of github.com/neo4j-contrib/rabbithole)
+* cypherSetup: named graph
