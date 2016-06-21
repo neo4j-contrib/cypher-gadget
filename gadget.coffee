@@ -138,7 +138,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
         if @config.get("cypherTaskJSON") == ""
           @customTask = null
           return
-        json = JSON.parse @config.get("cypherTaskJSON")
+        json = JSON.parse decodeURIComponent @config.get("cypherTaskJSON")
         if json.message && json.tasks
           @customTask = json
         else

@@ -1,7 +1,10 @@
 ++++
+<script src="../libs/underscore.js"></script>
 <script src="../libs/jquery.js"></script>
 <script src="../libs/jquery.modal.min.js"></script>
 <link rel="stylesheet" href="../libs/jquery.modal.min.css" type="text/css" media="screen" />
+<script src="./gadgetUtils.js"></script>
+<script src="./tasks.js"></script>
 <style>
     .modal {
         width: 770px;
@@ -13,10 +16,6 @@
     }
 </style>
 <script type="text/javascript">
-    function setGadgetUrl(sel) {
-        var $iframe = $(sel);
-        $iframe.attr("src", $iframe.data("src"));
-    }
 </script>
 ++++
 
@@ -28,9 +27,7 @@ You can't break anything, and if so, just reset the temporary database to its or
 ==== Example Gadget Number One!
 
 ++++
-
-<a href="#ex1" onclick="setGadgetUrl('#ex1')" rel="modal:open">Gadget 1</a>
-<iframe id="ex1" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<div id="ex1"></div>
 ++++
 
 The different widgets use different datasets, depending on the task, but save your changes across sessions.
@@ -47,21 +44,5 @@ Thinking about them and writing & executing them incrementally helps you much mo
 ==== Example Gadget Number Two!
 
 ++++
-<a href="#ex2" onclick="setGadgetUrl('#ex2')" rel="modal:open">Gadget 2</a>
-<iframe id="ex2" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=matchByNodeLabel" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-++++
-
-spamming the page with gadgets (they should all have the same number of nodes and relationships):
-
-++++
-<iframe src="../test.html?cypherSetup=full" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-++++
-++++
-<iframe src="../test.html?cypherSetup=full" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-++++
-++++
-<iframe src="../test.html?cypherSetup=full" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-++++
-++++
-<iframe src="../test.html?cypherSetup=full" width="750" height="1000" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<div id="ex2"></div>
 ++++
