@@ -6,13 +6,13 @@ function renderGadget(containerSelector, options) {
 
   if (options.task) {
     $(containerSelector).append(
-      '<iframe id="' + frameId + '" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTaskJSON=' +
+      '<iframe id="' + frameId + '" style="display:none;" data-src="../test.html?cypherSetup=' + options.cypherSetup +'&cypherTaskJSON=' +
       formatTaskJSON(options.task) +
       '" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
   }
   else if (options.taskName) {
     $(containerSelector).append(
-      '<iframe id="' + frameId + '" style="display:none;" data-src="../test.html?cypherSetup=full&cypherTask=' +
+      '<iframe id="' + frameId + '" style="display:none;" data-src="../test.html?cypherSetup=' + options.cypherSetup + '&cypherTask=' +
       options.taskName +
       '" width="750" height="850" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
   }

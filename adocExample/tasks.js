@@ -3,6 +3,7 @@ $(function () {
   //Example 1:
   renderGadget('#ex1', {
       label: 'Gadget 1',
+      cypherSetup: "lesson1",
       task: {
         message: "Adding 'Mystic River'",
         tasks: [
@@ -34,6 +35,7 @@ $(function () {
   //Example 2:
   renderGadget('#ex2', {
     label: 'Gadget 2',
+    cypherSetup: "full",
     task: {
       message: "Delete Emil and his relationships",
       tasks: [

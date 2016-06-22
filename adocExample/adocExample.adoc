@@ -19,12 +19,12 @@
 </script>
 ++++
 
-=== The Cypher Query Widget Example
+== The Cypher Query Widget Example
 
 If you haven't installed Neo4j on your machine, the Cypher Query widget is there for you to interactively explore, learn and get comfortable with Cypher in a safe environment.
 You can't break anything, and if so, just reset the temporary database to its original state.
 
-==== Example Gadget Number One!
+=== Example Gadget Number One!
 
 ++++
 <div id="ex1"></div>
@@ -41,7 +41,7 @@ Your history is available across sessions. And we provide some pre-canned querie
 Please try to work with the tasks on your own and not just copy & paste queries.
 Thinking about them and writing & executing them incrementally helps you much more in understanding the concepts.
 
-==== Example Gadget Number Two!
+=== Example Gadget Number Two!
 
 ++++
 <div id="ex2"></div>
