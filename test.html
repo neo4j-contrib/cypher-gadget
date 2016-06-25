@@ -31,15 +31,15 @@
         console.log(uuid, Gadget, typeof(Gadget));
         try {
             var storage = {
-                data : {},
+                // data : {},
                 set: function (prop, value) {
                     console.log("storing", prop, value, storage.data);
-                    // localStorage.setItem(prop, JSON.stringify(value));
-                    storage.data[prop]=value;
+                    localStorage.setItem(prop, JSON.stringify(value));
+                    // storage.data[prop]=value;
                 },
                 get: function (prop) {
-                    // var value = JSON.parse(localStorage.getItem(prop));
-                    var value = storage.data[prop] || null;
+                    var value = JSON.parse(localStorage.getItem(prop));
+                    // var value = storage.data[prop] || null;
                     console.log("retrieving", prop, value);
                     return value;
                 }
@@ -61,8 +61,9 @@
                 set: storage.set,
                 save: storage.set
             };
-            userState.set("uuid",uuid);
-            
+            if (userState.get("uuid") == null) {
+               userState.set("uuid",uuid);
+            }
             var g = new Gadget({
                 "$el": $("#" + gadgetId),
                 config: {get: configGetFunction},
