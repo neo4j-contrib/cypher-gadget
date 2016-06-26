@@ -4,11 +4,11 @@ define [], () ->
 
     tpl: """
       <div class="error-msg"></div>
-      <div class="error-dismiss"><i class="icon-remove"></i></div>
+      <div class="icon-dismiss"><i class="fa-times-circle fa"></i></div>
     """
 
     events:
-      'click .error-dismiss': 'dismiss'
+      'click .icon-dismiss': 'dismiss'
 
     initialize: (@$el) -> #
 

@@ -6,6 +6,8 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       <div class='input-field'>
         <ul class='top-input-controls'>
           <li class='execute'><div class='top-control run-button'>Run</div></li>
+          <li class='description'><div class='top-control'>Description</div></li>
+          <li class='solution'><div class='top-control'>Solution</div></li>
           <li class='clear'><div class='top-control'>Clear query</div></li>
           <li class='empty'><div class='top-control'>Revert to original dataset</div></li>
           <div style='clear:both;'></div>
@@ -45,6 +47,8 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
 
     events:
       'click .execute': 'execute'
+      'click .description': 'onDescriptionClick'
+      'click .solution': 'onSolutionClick'
       'click .back': 'onBackClick'
       'click .forward': 'onForwardClick'
       'click .empty': 'onEmptyDBClick'
@@ -54,7 +58,7 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       'click .history-item': 'onHistoryItemSelect'
       'click .history-button': 'onHistoryClick'
 
-    initialize: (@$el, @userState) ->
+    initialize: (@$el, @userState, @solution) ->
       _.bindAll @, "onQueryKeyup"
       @history = @userState.get("history") || []
       @currentIndex = @history.length
@@ -88,6 +92,12 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
     onEmptyDBClick: ->
       @trigger 'reset'
 
+    onDescriptionClick: -> 
+      @trigger 'description'
+
+    onSolutionClick: ->
+      @cm.setValue(@solution)
+
     onClearClick: ->
       @cm.setValue("")
 
@@ -106,6 +116,9 @@ define ["data/samples.js", "libs/codemirror", "libs/cm-cypher", "libs/cm-placeho
       # codemirror lets you move cursor position before this event is fired so
       # pressing up puts cursor to 0 and then if we did getCursor() it'd be 0.
       cp = @cm.getCursor()
+      if e.keyCode == 13 && (e.altKey || e.ctrlKey) # return
+        @execute()
+      else
       if e.keyCode == 38 # up
         if @cursorPos.line == 0 && @cursorPos.ch == 0 && cp.line == 0 && cp.ch == 0
           @loadHistory()

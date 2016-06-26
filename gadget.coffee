@@ -1,6 +1,6 @@
-define ["views/input", "views/table/table", "views/visualization", "views/error", "models/cypher", "./taskchecker",
+define ["views/input", "views/table/table", "views/visualization", "views/error","views/info", "models/cypher", "./taskchecker",
   "data/tasks"],
-  (Input, Table, Visualization, Error, Cypher, taskchecker, taskslib) ->
+  (Input, Table, Visualization, Error, Info, Cypher, taskchecker, taskslib) ->
     class CypherGadget
       tpl: """
       <div class="cypherGadget">
@@ -13,6 +13,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           <div class="input"></div>
           <div class="query-table"></div>
           <div class="error-container"></div>
+          <div class="info-container"></div>
         </div>
       </div>
     """
@@ -42,6 +43,7 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
 
         @table = new Table(@$el.find('.query-table'))
         @error = new Error(@$el.find('.error-container'))
+        @info = new Info(@$el.find('.info-container'))
 
         @setTaskMsg()
 
@@ -65,8 +67,9 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           if @userstate.get("successful")
             @setSuccessful()
 
-          @input = new Input(@$el.find('.input'), @userstate)
+          @input = new Input(@$el.find('.input'), @userstate, @solution)
           @input.render()
+          @input.on 'description', => @showDescription()
           @input.on 'query', @onQuery
           @input.on 'reset', =>
             @viz.empty()
@@ -91,6 +94,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           taskDiv.find('.task-msg').text(task.message)
         else
           taskDiv.hide()
+
+      showDescription: ->
+        if @description
+          @info.render @description
 
       onQuery: (query) ->
         if cypherTask = taskslib[@config.get("cypherTask")] || @customTask
@@ -139,6 +146,10 @@ define ["views/input", "views/table/table", "views/visualization", "views/error"
           @customTask = null
           return
         json = JSON.parse decodeURIComponent @config.get("cypherTaskJSON")
+        if json.solution
+          @solution = json.solution
+        if json.description
+          @description = json.description
         if json.message && json.tasks
           @customTask = json
         else

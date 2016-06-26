@@ -105,12 +105,24 @@ text.emptyMsg {
   text-align: center;
 }
 
-.error-msg {
+.info-container {
+  position: absolute;
+  bottom: 185px;
+  left: 10px;
+  background-color: #8DC35D;
+  border-radius: 3px;
+  width: 700px;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+
+.error-msg, .info-msg {
   padding: 3px;
   max-width: 670px;
 }
 
-.error-dismiss {
+.icon-dismiss {
   position: absolute;
   right: 5px;
   top: 1px;
@@ -302,11 +314,7 @@ text.emptyMsg {
   background-color: #e7e7e7;
 }
 
-.execute {
-  float: left;
-}
-
-.clear {
+.execute, .solution, .description, .clear {
   float: left;
 }
 
